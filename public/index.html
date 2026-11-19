@@ -281,6 +281,8 @@
           0 100%
         );
       }
+      #zen { margin-left: 8px; background: #b9d6bd; }
+      #zen:hover { background: #d2e8d5; }
       .start:hover {
         background: #ffd09e;
       }
@@ -1009,6 +1011,7 @@
         <button class="start" id="start" disabled>
           <span class="arrow">▸</span
           ><span id="startText">GENERATING TERRAIN</span></button
+        ><button class="start" id="zen" disabled>ZEN MODE</button
         ><progress id="progress" value="0" max="100"></progress
         ><small id="padStart"></small>
         <p id="summary" role="status"></p>
@@ -2153,8 +2156,10 @@ precision highp float;uniform sampler2D layer;out vec4 frag;void main(){ivec2 a=
         recordScreen("/");
       }
 
-      function launch() {
+      let zenMode = false;
+      function launch(modeChoice = "fight") {
         if (!ready || started) return;
+        zenMode = modeChoice === "zen";
         started = true;
         recordScreen("/play");
         nextEnemy = sim + 1.3;
@@ -2775,7 +2780,7 @@ precision highp float;uniform sampler2D layer;out vec4 frag;void main(){ivec2 a=
         sortieUI();
       }
       function updateFighters(dt) {
-        if (!airborne()) return;
+        if (zenMode || !airborne()) return;
         for (let i = enemies.length - 1; i >= 0; i--)
           if (Math.hypot(...sub(enemies[i].p, plane.p)) > 1700)
             enemies.splice(i, 1);
@@ -5241,7 +5246,7 @@ in vec4 color;out vec4 frag;void main(){if(color.a<bayer())discard;frag=vec4(col
               ? "Connect a controller and press a button to activate it."
               : "Gamepad input is unavailable in this browser context.";
           $("padStart").textContent = p
-            ? " · " + prettyPad("b0") + " to start"
+            ? " · " + prettyPad("b0") + " Fight · " + prettyPad("b2") + " Zen"
             : "";
           if (dialog.open) {
             axisOptions();
@@ -5278,6 +5283,7 @@ in vec4 color;out vec4 frag;void main(){if(color.a<bayer())discard;frag=vec4(col
           if (just.length) setHintDevice(true);
           if (just.includes("b0")) launch();
           else if (just.includes(config.pad.settings)) showControls();
+          else if (just.includes("b2")) launch("zen");
           return;
         }
         axis[0] = clamp(
@@ -5380,7 +5386,8 @@ in vec4 color;out vec4 frag;void main(){if(color.a<bayer())discard;frag=vec4(col
       $("exit").onclick = () => resetSortie();
       $("landing").onclick = requestLanding;
       $("sound").onclick = toggleSound;
-      $("start").onclick = launch;
+      $("start").onclick = () => launch();
+      $("zen").onclick = () => launch("zen");
       $("view").onclick = cycleView;
       const stage = $("stage");
       stage.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -5619,8 +5626,9 @@ in vec4 color;out vec4 frag;void main(){if(color.a<bayer())discard;frag=vec4(col
           render();
           ready = true;
           $("progress").classList.add("hidden");
-          $("startText").textContent = "START FLIGHT";
+          $("startText").textContent = "FIGHT MODE";
           $("start").disabled = false;
+          $("zen").disabled = false;
           requestAnimationFrame(frame);
         } catch (e) {
           $("startText").textContent = "FLIGHT UNAVAILABLE";
