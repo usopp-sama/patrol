@@ -1,0 +1,5636 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#171b21" />
+    <title>Patrol — Lake Country</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f5e8c9;
+        --muted: #a19b8f;
+        --orange: #ffa060;
+        --ink: #171b20;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        color: var(--paper);
+        background: var(--ink);
+        font-synthesis: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        height: 100svh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      button:focus-visible {
+        outline: 2px solid var(--orange);
+        outline-offset: 4px;
+      }
+      header,
+      footer {
+        flex: none;
+        display: flex;
+        align-items: center;
+        padding: 0 clamp(16px, 3vw, 52px);
+      }
+      header {
+        height: 62px;
+        border-bottom: 1px solid #3c3b38;
+        gap: 16px;
+      }
+      header .brand {
+        font-family: Silkscreen, "IBM Plex Mono", monospace;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        font-weight: 700;
+        letter-spacing: 3px;
+        font-size: 18px;
+      }
+      .emblem {
+        width: 34px;
+        height: 23px;
+        image-rendering: pixelated;
+      }
+      .label,
+      .sound,
+      .view,
+      .region,
+      .tag,
+      .station,
+      .flightdata,
+      .touch button {
+        font-size: 10px;
+        letter-spacing: 1.6px;
+        font-weight: 600;
+      }
+      .label {
+        color: #ada99f;
+        border-left: 1px solid #505052;
+        padding-left: 17px;
+      }
+      .sound {
+        white-space: nowrap;
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 0 9px 12px;
+      }
+      .sound i {
+        display: block;
+        width: 18px;
+        height: 13px;
+        background: linear-gradient(to right, transparent 0);
+        position: relative;
+        color: #bcb6aa;
+      }
+      .sound i:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 5px;
+        width: 2px;
+        height: 5px;
+        background: currentColor;
+        box-shadow:
+          4px -3px currentColor,
+          4px 0 currentColor,
+          8px -5px currentColor,
+          8px 0 currentColor,
+          12px -2px currentColor;
+      }
+      .sound[aria-pressed="true"] {
+        color: var(--orange);
+      }
+      main {
+        position: relative;
+        flex: 1;
+        min-height: 0;
+        background: #b29895;
+        overflow: hidden;
+        isolation: isolate;
+        touch-action: none;
+      }
+      #world,
+      #panel {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+      }
+      #panel {
+        pointer-events: none;
+      }
+      .corn {
+        position: absolute;
+        inset: 18px;
+        pointer-events: none;
+        background:
+          linear-gradient(#ffefd1aa, #ffefd1aa) 0 0/14px 1px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 0 0/1px 14px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 100% 0/14px 1px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 100% 0/1px 14px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 0 100%/14px 1px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 0 100%/1px 14px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 100% 100%/14px 1px,
+          linear-gradient(#ffefd1aa, #ffefd1aa) 100% 100%/1px 14px;
+        background-repeat: no-repeat;
+      }
+      .station,
+      .view,
+      .flightdata,
+      .region {
+        position: absolute;
+        text-shadow: 1px 2px #292b3790;
+      }
+      .station {
+        top: 34px;
+        left: clamp(30px, 4vw, 70px);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .station i {
+        width: 7px;
+        height: 7px;
+        background: #ffb27b;
+        box-shadow: 0 0 0 2px #312e3c66;
+      }
+      .view {
+        right: clamp(30px, 4vw, 70px);
+        top: 27px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 6px 9px;
+        background: #20263388;
+        color: #fcf0d6;
+        font-size: 9px;
+      }
+      .view b {
+        color: #ffbd86;
+        font-size: 12px;
+      }
+      .region {
+        left: clamp(30px, 4vw, 70px);
+        bottom: 32px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        color: #ffecd0;
+      }
+      .region span {
+        border-left: 1px solid #f3d9b88c;
+        padding-left: 13px;
+        color: #e7ddce;
+        font-weight: 400;
+      }
+      .flightdata {
+        right: clamp(30px, 4vw, 70px);
+        bottom: 32px;
+        letter-spacing: 1px;
+      }
+      .titleShade {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          90deg,
+          #1b172e85 0,
+          #28203750 28%,
+          transparent 63%
+        );
+      }
+      .card {
+        position: absolute;
+        left: clamp(33px, 7vw, 124px);
+        top: 47%;
+        transform: translateY(-50%);
+        max-width: 50%;
+      }
+      .tag {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: #ffe4bd;
+        text-shadow: 1px 2px #33303b;
+      }
+      .tag:before {
+        content: "";
+        width: 23px;
+        height: 3px;
+        background: #ffac70;
+      }
+      .logo {
+        margin: 16px 0 12px;
+        line-height: 0;
+      }
+      .logo canvas {
+        width: clamp(224px, 35vw, 580px);
+        max-width: 100%;
+        image-rendering: pixelated;
+        filter: drop-shadow(0px 4px 0px #4a393d);
+      }
+      .card p {
+        font-size: clamp(12px, 1.15vw, 17px);
+        line-height: 1.7;
+        margin: 0 0 25px;
+        letter-spacing: 0.03em;
+        text-shadow: 1px 2px #3c3442;
+      }
+      .start {
+        display: inline-flex;
+        align-items: center;
+        gap: 20px;
+        min-height: 44px;
+        padding: 0 19px;
+        background: #ffac72;
+        color: #261f24;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 1.3px;
+        box-shadow: 3px 3px 0 #342e36;
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% calc(100% - 5px),
+          calc(100% - 5px) 100%,
+          0 100%
+        );
+      }
+      .start:hover {
+        background: #ffd09e;
+      }
+      .start:active {
+        transform: translate(1px, 2px);
+      }
+      .start:disabled {
+        opacity: 0.6;
+      }
+      .start .arrow {
+        font-size: 19px;
+      }
+      .card progress {
+        width: 155px;
+        height: 4px;
+        accent-color: #ffb079;
+        display: block;
+        margin-top: 14px;
+      }
+      .flying .card,
+      .flying .titleShade,
+      .flying #progress,
+      .flying .station {
+        display: none;
+      }
+      .flying main {
+        cursor: crosshair;
+      }
+      .hidden {
+        display: none !important;
+      }
+      footer {
+        min-height: 57px;
+        gap: clamp(12px, 2.2vw, 38px);
+        font-size: 11px;
+        color: #c9c5b9;
+      }
+      footer .hint {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+      }
+      kbd {
+        display: inline-block;
+        font:
+          600 9px "IBM Plex Mono",
+          monospace;
+        border: 1px solid #55534f;
+        border-bottom-width: 2px;
+        color: #f2e3c7;
+        border-radius: 3px;
+        padding: 3px 5px;
+        line-height: 1.1;
+        letter-spacing: 0.5px;
+      }
+      .ammo {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #ffd7ae;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .ammo canvas {
+        width: 57px;
+        height: 15px;
+        image-rendering: pixelated;
+      }
+      .touch {
+        display: none;
+        position: absolute;
+        bottom: 56px;
+        right: 17px;
+        gap: 6px;
+      }
+      .touch button {
+        padding: 12px 9px;
+        background: #1c242dd9;
+        border: 1px solid #d6c4a8aa;
+        color: #ffe5bd;
+        font-size: 9px;
+        touch-action: none;
+      }
+      #notice {
+        position: absolute;
+        top: 19%;
+        width: 100%;
+        text-align: center;
+        pointer-events: none;
+        color: #ffddb0;
+        letter-spacing: 2px;
+        font-size: 11px;
+        text-shadow: 1px 2px #171d28;
+      }
+      @media (max-width: 900px) {
+        footer {
+          gap: 12px;
+          font-size: 10px;
+        }
+        footer .hint {
+          gap: 4px;
+        }
+        .card {
+          max-width: 48%;
+        }
+      }
+      @media (pointer: coarse) {
+        .flying .touch {
+          display: flex;
+        }
+        .cockpitMode .touch {
+          bottom: 36%;
+        }
+        footer .hint {
+          display: none;
+        }
+        footer:before {
+          content: "DRAG TO STEER";
+          font-size: 10px;
+          letter-spacing: 1.4px;
+        }
+      }
+      @media (max-width: 670px) {
+        header {
+          height: 46px;
+          gap: 10px;
+        }
+        .label {
+          padding-left: 10px;
+          font-size: 8px;
+          letter-spacing: 0.9px;
+        }
+        header .brand {
+          font-size: 14px;
+          letter-spacing: 1px;
+          gap: 7px;
+        }
+        .label {
+          white-space: nowrap;
+        }
+        .sound {
+          font-size: 9px;
+        }
+        .card {
+          left: 8%;
+          top: 68%;
+          max-width: 85%;
+        }
+        .logo canvas {
+          width: 66vw;
+        }
+        .region span {
+          display: none;
+        }
+        .region,
+        .flightdata {
+          font-size: 8px;
+          bottom: 20px;
+        }
+        .station {
+          top: 22px;
+          font-size: 8px;
+        }
+        .view {
+          top: 17px;
+          font-size: 8px;
+        }
+        .corn {
+          inset: 10px;
+        }
+        footer {
+          min-height: 42px;
+          gap: 10px;
+        }
+        footer .hint:nth-child(3),
+        footer .hint:nth-child(4) {
+          display: none;
+        }
+        .start {
+          min-height: 38px;
+        }
+        .card p {
+          margin-bottom: 16px;
+        }
+        .card .logo {
+          margin: 10px 0;
+        }
+        .tag {
+          font-size: 9px;
+        }
+      }
+      @media (max-height: 540px) {
+        header {
+          height: 36px;
+        }
+        footer {
+          min-height: 35px;
+        }
+        .card {
+          top: 49%;
+        }
+        .card .logo {
+          margin: 6px 0;
+        }
+        .logo canvas {
+          width: 27vw;
+        }
+        .card p {
+          font-size: 11px;
+          margin-bottom: 10px;
+        }
+        .start {
+          min-height: 32px;
+        }
+        .station,
+        .view {
+          top: 13px;
+        }
+        .region,
+        .flightdata {
+          bottom: 14px;
+        }
+        .corn {
+          inset: 7px;
+        }
+      }
+
+      #exit,
+      #combat,
+      #landing {
+        display: none;
+      }
+      .flying #exit,
+      .flying #combat,
+      .flying #landing {
+        display: flex;
+      }
+      #exit {
+        gap: 7px;
+        align-items: center;
+        border: 1px solid #5a5652;
+        padding: 6px 10px;
+        color: #ecdec4;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.7px;
+      }
+      #exit:hover,
+      #landing:enabled:hover {
+        background: #403c3a;
+      }
+      .flying .region {
+        display: none;
+      }
+      #combat,
+      #landing {
+        position: absolute;
+        left: clamp(28px, 4vw, 70px);
+        background: #1c232cdb;
+        color: #f6e7cd;
+        font-weight: 600;
+        letter-spacing: 0.9px;
+        font-size: 10px;
+        align-items: center;
+        gap: 8px;
+      }
+      #combat {
+        top: 27px;
+        padding: 8px 10px;
+      }
+      #combat progress {
+        appearance: none;
+        width: 74px;
+        height: 6px;
+        border: 0;
+        background: #4c4343;
+      }
+      #combat progress::-webkit-progress-bar {
+        background: #4c4343;
+      }
+      #combat progress::-webkit-progress-value {
+        background: #c7dba6;
+      }
+      #combat progress::-moz-progress-bar {
+        background: #c7dba6;
+      }
+      #combat .score {
+        border-left: 1px solid #6d6460;
+        padding-left: 9px;
+        color: #ffc38d;
+      }
+      #landing {
+        bottom: 29px;
+        padding: 9px 11px;
+        border: 1px solid #b8c8b380;
+        color: #d1e7bb;
+        max-width: 70%;
+      }
+      #landing:disabled {
+        color: #c0bbac;
+        border-color: #8a847650;
+        cursor: default;
+      }
+      .damaged main:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        box-shadow: inset 0 0 0 4px #e66851bb;
+      }
+      .card #summary {
+        margin: 10px 0 0;
+        color: #ffd2ab;
+        font-size: 11px;
+      }
+      footer {
+        column-gap: clamp(8px, 1.3vw, 23px);
+      }
+      @media (max-width: 720px) {
+        .flying .label {
+          display: none;
+        }
+        #combat {
+          top: 19px;
+          left: 16px;
+          gap: 4px;
+          font-size: 8px;
+        }
+        #combat progress {
+          width: 40px;
+        }
+        #landing {
+          left: 15px;
+          bottom: 15px;
+          font-size: 8px;
+          padding: 7px;
+        }
+        .touch {
+          gap: 3px;
+          right: 10px;
+        }
+        .touch button {
+          padding: 11px 6px;
+        }
+        footer {
+          overflow-x: auto;
+        }
+        .view {
+          right: 15px;
+        }
+        #exit {
+          font-size: 9px;
+          padding: 5px;
+        }
+        .flying #telemetry {
+          bottom: 42px;
+        }
+        .cockpitMode #landing {
+          bottom: 5px;
+        }
+      }
+      @media (pointer: coarse) {
+        footer .hint {
+          display: none !important;
+        }
+      }
+      #combat.critical progress::-webkit-progress-value {
+        background: #ef8163;
+      }
+      #combat.critical progress::-moz-progress-bar {
+        background: #ef8163;
+      }
+      #combat.critical #hp {
+        color: #ff9c79;
+      }
+      @media (pointer: fine) and (max-width: 1040px) {
+        footer {
+          column-gap: 9px;
+          overflow-x: auto;
+        }
+        footer .hint {
+          font-size: 10px;
+        }
+      }
+      @media (pointer: coarse) and (max-width: 370px) {
+        .touch {
+          gap: 2px;
+        }
+        .touch button {
+          padding: 10px 5px;
+        }
+      }
+      #openControls {
+        margin-left: auto;
+        color: #e9dcc6;
+        border: 1px solid #535653;
+        padding: 7px 11px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+      header .sound {
+        margin-left: 0;
+      }
+      #controlsDialog {
+        padding: 0;
+        color: var(--paper);
+        background: #1b2128;
+        border: 1px solid #656561;
+        width: min(550px, calc(100vw - 24px));
+        max-height: calc(100svh - 24px);
+        box-shadow: 5px 5px 0 #161a20b0;
+        overflow: hidden;
+        font:
+          13px "IBM Plex Mono",
+          monospace;
+      }
+      #controlsDialog::backdrop {
+        background: #14151caa;
+      }
+      .control-window {
+        display: flex;
+        flex-direction: column;
+        max-height: min(710px, calc(100svh - 26px));
+      }
+      .control-head,
+      .control-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+      }
+      .control-head {
+        border-top: 3px solid var(--orange);
+      }
+      .control-head h2 {
+        font:
+          20px Silkscreen,
+          monospace;
+        margin: 0;
+      }
+      .control-head button {
+        width: 32px;
+        height: 32px;
+        font-size: 23px;
+        color: #bfb9a9;
+      }
+      .control-tabs {
+        display: flex;
+        border-bottom: 1px solid #484c50;
+        padding: 0 20px;
+        gap: 14px;
+      }
+      .control-tabs button {
+        padding: 7px 2px 12px;
+        color: #aaa9a0;
+        font-size: 12px;
+        border-bottom: 2px solid transparent;
+      }
+      .control-tabs button[aria-pressed="true"] {
+        color: #ffb77f;
+        border-color: #ffad75;
+      }
+      .control-scroll {
+        padding: 20px 22px;
+        overflow: auto;
+        min-height: 0;
+        scrollbar-color: #626366 #1b2128;
+      }
+      .response-layout {
+        display: grid;
+        grid-template-columns: 146px 1fr;
+        gap: 26px;
+        align-items: center;
+      }
+      .input-monitor {
+        margin: 0;
+        padding: 6px;
+        background: #121a20;
+        border: 1px solid #41494c;
+      }
+      .input-monitor canvas {
+        display: block;
+        width: 100%;
+        image-rendering: pixelated;
+      }
+      .input-monitor figcaption {
+        margin: 6px 0 4px;
+        text-align: center;
+        color: #a7b4ac;
+        font-size: 9px;
+        letter-spacing: 1.5px;
+      }
+      .slider-bank {
+        display: grid;
+        gap: 3px;
+      }
+      .slider-bank label,
+      .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+      .slider-bank label {
+        font-size: 12px;
+      }
+      .slider-bank output {
+        color: #ffb47d;
+        font-variant-numeric: tabular-nums;
+      }
+      .slider-bank input {
+        width: 100%;
+        margin: 5px 0 12px;
+        accent-color: #ffae77;
+      }
+      .slider-bank input:last-child {
+        margin-bottom: 0;
+      }
+      .toggle-row {
+        margin-top: 19px;
+        padding: 14px 0 0;
+        border-top: 1px solid #3b4247;
+      }
+      .toggle-row small {
+        display: block;
+        margin-top: 3px;
+        font-size: 10px;
+        color: #b1b2a9;
+      }
+      .toggle-row input {
+        width: 17px;
+        height: 17px;
+        accent-color: #ffb47d;
+      }
+      .compact {
+        padding: 9px 0;
+        margin-top: 8px;
+      }
+      .mouse-selects {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      #controlsDialog select {
+        color: var(--paper);
+        background: #293139;
+        border: 1px solid #4e5559;
+        font: 12px inherit;
+        font-family: inherit;
+        padding: 7px;
+        width: 100%;
+        min-width: 0;
+      }
+      .mouse-selects label,
+      .device-label {
+        font-size: 11px;
+        color: #c5c6b9;
+      }
+      .mouse-selects select,
+      #padDevices {
+        margin-top: 5px;
+      }
+      .control-help {
+        color: #b8bbb1;
+        font-size: 11px;
+        line-height: 1.6;
+        margin: 14px 0;
+      }
+      .binding-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 16px;
+      }
+      .bind-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
+        font-size: 11px;
+        border-top: 1px solid #3a4147;
+        padding: 7px 0;
+      }
+      .bind-row button {
+        background: #2c343d;
+        border: 1px solid #5b5e5c;
+        min-width: 54px;
+        min-height: 27px;
+        padding: 3px 7px;
+        font-size: 10px;
+        line-height: 1.3;
+      }
+      .bind-row button.listening {
+        color: #ffb77f;
+        border-color: #ffac73;
+      }
+      .control-foot {
+        border-top: 1px solid #41464b;
+        padding: 12px 22px;
+        gap: 10px;
+      }
+      .control-foot button {
+        font-size: 11px;
+      }
+      .control-foot #doneControls {
+        background: #ffb27c;
+        color: #221f20;
+        padding: 9px 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      #bindingMessage {
+        font-size: 11px;
+        color: #ffc498;
+        margin: 9px 0 0;
+      }
+      #bindingMessage:empty {
+        display: none;
+      }
+      #controlsDialog :focus-visible {
+        outline: 2px solid #ffd199;
+        outline-offset: 2px;
+      }
+      #padStart {
+        color: #ffce9e;
+        font-size: 11px;
+      }
+      @media (max-width: 630px) {
+        header {
+          gap: 8px;
+        }
+        header .label {
+          display: none;
+        }
+        #openControls {
+          padding: 5px 6px;
+          font-size: 9px;
+        }
+        header .sound {
+          padding-left: 1px;
+        }
+        .control-head,
+        .control-foot,
+        .control-scroll {
+          padding: 12px 14px;
+        }
+        .response-layout {
+          grid-template-columns: 88px 1fr;
+          gap: 12px;
+        }
+        .control-tabs {
+          padding: 0 14px;
+          gap: 10px;
+        }
+        .binding-list {
+          grid-template-columns: 1fr;
+        }
+        .control-head h2 {
+          font-size: 17px;
+        }
+        .control-tabs button {
+          font-size: 11px;
+        }
+        .input-monitor figcaption {
+          font-size: 7px;
+        }
+        .binding-list button {
+          min-width: 84px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <canvas id="emblem" class="emblem" width="34" height="23"></canvas
+        >PATROL
+      </div>
+      <div class="label">FLIGHT SIMULATOR</div>
+      <button id="exit" aria-label="Exit flight to main screen">
+        <kbd>ESC</kbd> MENU</button
+      ><button
+        id="openControls"
+        aria-haspopup="dialog"
+        title="Flight controls (P)"
+      >
+        CONTROLS</button
+      ><button
+        id="sound"
+        class="sound"
+        aria-pressed="false"
+        aria-label="Toggle synthesized sound"
+      >
+        <i></i><span>SOUND OFF</span>
+      </button>
+    </header>
+    <main id="stage">
+      <canvas
+        id="world"
+        aria-label="Pixel-art lake country flight simulation"
+      ></canvas
+      ><canvas id="panel"></canvas>
+      <div class="titleShade"></div>
+      <div class="corn"></div>
+      <div class="station"><i></i> ATTRACT MODE</div>
+      <button id="view" class="view" aria-label="Change camera">
+        <b>▣</b><span>CHASE CAM</span>
+      </button>
+      <div id="combat">
+        <label for="health">HULL</label
+        ><progress id="health" max="100" value="100"></progress
+        ><span id="hp">100%</span
+        ><span class="score">KILLS <b id="kills">00</b></span>
+      </div>
+      <button id="landing" title="L · Request assisted landing or take off">
+        SEARCHING FOR AIRSTRIP
+      </button>
+      <section class="card">
+        <div class="tag">COMBAT PATROL &nbsp;/&nbsp; 01</div>
+        <h1 class="logo" aria-label="Patrol">
+          <canvas id="wordmark" width="168" height="37"></canvas>
+        </h1>
+        <p>Lake country. Last light.</p>
+        <button class="start" id="start" disabled>
+          <span class="arrow">▸</span
+          ><span id="startText">GENERATING TERRAIN</span></button
+        ><progress id="progress" value="0" max="100"></progress
+        ><small id="padStart"></small>
+        <p id="summary" role="status"></p>
+      </section>
+      <div class="region">LAKE COUNTRY <span>AUTUMN SECTOR</span></div>
+      <div id="telemetry" class="flightdata"></div>
+      <div id="notice" role="status"></div>
+      <div class="touch">
+        <button data-act="roll">ROLL</button
+        ><button data-act="boost">BOOST</button
+        ><button data-act="gun">GUN</button><button data-act="fire">MSL</button
+        ><button data-act="rear" aria-label="Hold for rear view">REAR</button
+        ><button data-act="view">VIEW</button>
+      </div>
+    </main>
+    <footer>
+      <span class="hint"><kbd>MOUSE / ↑↓←→</kbd> Steer</span
+      ><span class="hint"><kbd>CLICK</kbd> Roll</span
+      ><span class="hint"><kbd>HOLD</kbd> Afterburner</span
+      ><span class="hint"><kbd>G</kbd> Hold gun</span
+      ><span class="hint"><kbd>F / RMB</kbd> Missile</span
+      ><span class="hint"><kbd>L</kbd> Land / take off</span
+      ><span class="hint"><kbd>SPACE</kbd> View</span
+      ><span class="hint"><kbd>C</kbd> Hold rear view</span>
+      <div class="ammo">
+        <canvas id="stores" width="57" height="15"></canvas
+        ><span id="count">04 / 04</span>
+      </div>
+    </footer>
+    <dialog id="controlsDialog" aria-labelledby="controlsTitle">
+      <div class="control-window">
+        <div class="control-head">
+          <h2 id="controlsTitle">Flight controls</h2>
+          <button id="closeControls" aria-label="Close controls">×</button>
+        </div>
+        <div class="control-tabs" role="group" aria-label="Control settings">
+          <button data-tab="response" aria-pressed="true">Sensitivity</button
+          ><button data-tab="keys" aria-pressed="false">Keys &amp; mouse</button
+          ><button data-tab="pad" aria-pressed="false">Gamepad</button>
+        </div>
+        <div class="control-scroll">
+          <section id="tab-response">
+            <div class="response-layout">
+              <figure class="input-monitor">
+                <canvas
+                  id="stickScope"
+                  width="128"
+                  height="108"
+                  aria-label="Live steering input"
+                ></canvas>
+                <figcaption>STEERING INPUT</figcaption>
+              </figure>
+              <div class="slider-bank">
+                <label for="yawGain"
+                  >Turn sensitivity <output id="yawGainValue"></output></label
+                ><input id="yawGain" type="range" min="50" max="200" step="5" />
+                <label for="pitchGain"
+                  >Pitch sensitivity
+                  <output id="pitchGainValue"></output></label
+                ><input
+                  id="pitchGain"
+                  type="range"
+                  min="50"
+                  max="200"
+                  step="5"
+                />
+                <label for="deadzone"
+                  >Stick dead zone <output id="deadzoneValue"></output></label
+                ><input id="deadzone" type="range" min="0" max="45" step="1" />
+              </div>
+            </div>
+            <label class="toggle-row"
+              ><span
+                >Invert pitch <small>Mouse, touch and analog stick</small></span
+              ><input id="invertPitch" type="checkbox"
+            /></label>
+          </section>
+          <section id="tab-keys" hidden>
+            <div class="mouse-selects">
+              <label>Left mouse<select id="leftMouse"></select></label
+              ><label>Right mouse<select id="rightMouse"></select></label>
+            </div>
+            <p class="control-help">
+              Select a binding, then press its new key. Shared keys swap
+              actions.
+            </p>
+            <div class="binding-list" id="keyBindings"></div>
+          </section>
+          <section id="tab-pad" hidden>
+            <label class="device-label" for="padDevices">Controller</label
+            ><select id="padDevices"></select>
+            <p id="padHelp" class="control-help"></p>
+            <div class="mouse-selects">
+              <label>Turn axis<select id="turnAxis"></select></label
+              ><label>Pitch axis<select id="pitchAxis"></select></label>
+            </div>
+            <label class="toggle-row compact"
+              ><span>Reverse turn axis</span
+              ><input id="invertTurn" type="checkbox"
+            /></label>
+            <p class="control-help">
+              Select a binding, then press a button or squeeze a trigger.
+            </p>
+            <div class="binding-list" id="padBindings"></div>
+          </section>
+          <p id="bindingMessage" role="status"></p>
+        </div>
+        <div class="control-foot">
+          <button id="resetControls">Restore defaults</button
+          ><button id="doneControls">DONE</button>
+        </div>
+      </div>
+    </dialog>
+    <script>
+      "use strict";
+      const $ = (id) => document.getElementById(id),
+        TAU = Math.PI * 2,
+        clamp = (v, a, b) => Math.max(a, Math.min(b, v)),
+        mix = (a, b, t) => a + (b - a) * t,
+        mod = (v, n) => ((v % n) + n) % n,
+        wrap = (a) => mod(a + Math.PI, TAU) - Math.PI;
+      function pixelBrand() {
+        const g = $("emblem").getContext("2d");
+        g.fillStyle = "#ffac72";
+        for (let k = 0; k < 3; k++)
+          for (let j = 0; j < 4; j++) {
+            g.fillRect(k * 4 + j, 3 + k * 6 + j, 13 - k * 3, 1);
+            g.fillRect(21 + k * 3 - j - k * 4, 3 + k * 6 + j, 13 - k * 3, 1);
+          }
+        g.fillRect(15, 8, 4, 11);
+        const letters = [
+          "11110/11011/11011/11110/11000/11000/11000",
+          "01110/11011/11011/11111/11011/11011/11011",
+          "11111/11111/00110/00110/00110/00110/00110",
+          "11110/11011/11011/11110/11100/11010/11011",
+          "01110/11011/11011/11011/11011/11011/01110",
+          "11000/11000/11000/11000/11000/11000/11111",
+        ];
+        const c = $("wordmark");
+        c.width = 163;
+        c.height = 33;
+        const p = c.getContext("2d");
+        letters.forEach((ch, l) =>
+          ch.split("/").forEach((row, y) => {
+            for (let j = 0; j < 4; j++) {
+              p.fillStyle = [
+                "#fff4d5",
+                "#ffefcf",
+                "#ffe9c6",
+                "#ffdbb1",
+                "#ffd2a0",
+                "#ffc08e",
+                "#ffa978",
+              ][y];
+              for (let x = 0; x < 5; x++)
+                if (row[x] === "1")
+                  p.fillRect(
+                    12 + l * 24 + x * 4 + Math.floor((27 - y * 4 - j) * 0.27),
+                    y * 4 + j,
+                    4,
+                    1,
+                  );
+            }
+          }),
+        );
+        for (let j = 0; j < 3; j++) {
+          p.fillStyle = ["#ffedcd", "#ffd7ad", "#ffb381"][j];
+          p.fillRect(5 - j * 2, 6 + j * 8, 15, 2);
+        }
+      }
+      pixelBrand();
+      const SIZE = 768,
+        PERIOD = 6144,
+        CELL = PERIOD / SIZE;
+      function terrainWorker() {
+        const N = 768,
+          L = 6144,
+          tau = 2 * Math.PI;
+        function hash(x, z) {
+          let h =
+            Math.imul(x + 13987, 374761393) + Math.imul(z - 34, 668265263);
+          h = Math.imul(h ^ (h >>> 13), 1274126177);
+          return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+        }
+        function noise(x, z, n) {
+          x *= n / L;
+          z *= n / L;
+          let i = Math.floor(x),
+            j = Math.floor(z),
+            u = x - i,
+            v = z - j;
+          u = u * u * (3 - 2 * u);
+          v = v * v * (3 - 2 * v);
+          let w = (k) => ((k % n) + n) % n;
+          let a = hash(w(i), w(j)),
+            b = hash(w(i + 1), w(j)),
+            c = hash(w(i), w(j + 1)),
+            d = hash(w(i + 1), w(j + 1));
+          return (a + (b - a) * u) * (1 - v) + (c + (d - c) * u) * v;
+        }
+        onmessage = (e) => {
+          let { lo, hi, stage, heights } = e.data;
+          if (stage === 0) {
+            let buffer = new Float32Array((hi - lo) * N * 2);
+            for (let z = lo; z < hi; z++) {
+              for (let x = 0; x < N; x++) {
+                let X = x * 8,
+                  Z = z * 8,
+                  n = noise(X, Z, 6),
+                  mid = noise(X + 711, Z - 299, 19),
+                  detail = noise(X, Z, 49),
+                  f = noise(X, Z, 117);
+                let bed =
+                  -44 +
+                  70 * (n - 0.45) +
+                  64 * (mid - 0.47) +
+                  30 * (detail - 0.48) +
+                  8 * f;
+                let riverX =
+                  340 * Math.sin(((tau * Z) / L) * 2 + 0.15) +
+                  240 * Math.sin(((tau * Z) / L) * 3 - 0.6) +
+                  130;
+                let river =
+                  (Math.abs(Math.sin((Math.PI * (X - riverX)) / L)) * L) /
+                  Math.PI;
+                let shore = Math.min(
+                  1,
+                  Math.max(
+                    0,
+                    (river - 340 - 145 * Math.cos(((tau * Z) / L) * 3)) / 560,
+                  ),
+                );
+                let crossRidge = Math.pow(
+                  0.5 +
+                    0.5 *
+                      Math.cos(
+                        tau * (Z / L - 0.43) +
+                          0.65 * Math.sin(((tau * X) / L) * 2),
+                      ),
+                  5,
+                );
+                let ranges =
+                  (0.23 + 1.15 * crossRidge) *
+                  Math.pow(n, 1.3) *
+                  (260 + 620 * (1 - Math.abs(mid * 2 - 1)) + 160 * detail);
+                let h =
+                  bed +
+                  shore * (30 + 115 * n + 157 * Math.pow(mid, 2)) +
+                  ranges * Math.min(1, shore * 0.49 + crossRidge * 0.88);
+                let k = ((z - lo) * N + x) * 2;
+                buffer[k] = h;
+                buffer[k + 1] =
+                  noise(X + 1200, Z, 28) * 0.53 +
+                  noise(X, Z, 76) * 0.21 +
+                  n * 0.26;
+              }
+              if ((z - lo) % 32 === 0)
+                postMessage({ progress: (z - lo) / (hi - lo) });
+            }
+            postMessage({ lo, buffer }, [buffer.buffer]);
+          } else {
+            let out = new Uint8Array((hi - lo) * N * 4);
+            let at = (x, z) =>
+              heights[((((z % N) + N) % N) * N + (((x % N) + N) % N)) * 2];
+            for (let z = lo; z < hi; z++) {
+              for (let x = 0; x < N; x++) {
+                let i = z * N + x,
+                  k = ((z - lo) * N + x) * 4,
+                  h = heights[2 * i],
+                  shadow = 0;
+                for (let s = 2; s < 112; s = Math.floor(s * 1.23) + 1) {
+                  let delta =
+                    at(x + Math.round(s * 0.35), z + s) - h - 8 * s * 0.23;
+                  shadow = Math.max(shadow, Math.min(1, delta / 19));
+                }
+                let enc = Math.max(
+                  0,
+                  Math.min(65535, Math.round((h + 160) * 40)),
+                );
+                out[k] = enc >> 8;
+                out[k + 1] = enc & 255;
+                out[k + 2] = heights[2 * i + 1] * 255;
+                out[k + 3] = (1 - shadow * 0.78) * 255;
+              }
+              if ((z - lo) % 32 === 0)
+                postMessage({ progress: (z - lo) / (hi - lo) });
+            }
+            postMessage({ lo, buffer: out }, [out.buffer]);
+          }
+        };
+      }
+      let fields, atlas;
+      async function generate() {
+        const url = URL.createObjectURL(
+          new Blob(["(" + terrainWorker.toString() + ")()"], {
+            type: "text/javascript",
+          }),
+        );
+        let workers = [],
+          n = Math.min(4, Math.max(2, navigator.hardwareConcurrency || 2));
+        for (let i = 0; i < n; i++) workers.push(new Worker(url));
+        try {
+          for (let stage = 0; stage < 2; stage++) {
+            let parts = Array(n).fill(0);
+            let dest = stage
+              ? new Uint8Array(SIZE * SIZE * 4)
+              : new Float32Array(SIZE * SIZE * 2);
+            await Promise.all(
+              workers.map(
+                (w, i) =>
+                  new Promise((ok, fail) => {
+                    let lo = Math.floor((i * SIZE) / n),
+                      hi = Math.floor(((i + 1) * SIZE) / n);
+                    w.onerror = fail;
+                    w.onmessage = (e) => {
+                      if (e.data.buffer) {
+                        dest.set(e.data.buffer, lo * SIZE * (stage ? 4 : 2));
+                        parts[i] = 1;
+                        ok();
+                      } else parts[i] = e.data.progress;
+                      $("progress").value =
+                        5 +
+                        stage * 44 +
+                        (parts.reduce((a, b) => a + b, 0) / n) * 44;
+                    };
+                    w.postMessage({
+                      stage,
+                      lo,
+                      hi,
+                      heights: stage ? fields : null,
+                    });
+                  }),
+              ),
+            );
+            if (stage) atlas = dest;
+            else fields = dest;
+          }
+        } finally {
+          workers.forEach((w) => w.terminate());
+          URL.revokeObjectURL(url);
+        }
+      }
+      function ground(x, z) {
+        let u = mod(x / CELL, SIZE),
+          v = mod(z / CELL, SIZE),
+          i = Math.floor(u),
+          j = Math.floor(v),
+          a = (j * SIZE + i) * 2,
+          b = (j * SIZE + ((i + 1) % SIZE)) * 2,
+          c = (((j + 1) % SIZE) * SIZE + i) * 2,
+          d = (((j + 1) % SIZE) * SIZE + ((i + 1) % SIZE)) * 2;
+        return mix(
+          mix(fields[a], fields[b], u - i),
+          mix(fields[c], fields[d], u - i),
+          v - j,
+        );
+      }
+      const common = `precision highp float;
+uniform mat3 body;uniform vec3 eye,cr,cu,cf,jet;uniform vec2 res;uniform float lens,tim;
+const float L=6144.,C=8.,FAR=10400.,NEAR=.18;
+const vec3 sun=vec3(.324,.194,.926);
+float hash(vec2 p){vec3 a=fract(p.xyx*vec3(.1031,.1030,.0973));a+=dot(a,a.yzx+33.33);return fract((a.x+a.y)*a.z);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.),f.x),f.y);}
+float bayer(){ivec2 p=ivec2(gl_FragCoord.xy)&3;int a[16]=int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);return (float(a[p.x+p.y*4])+.5)/16.;}
+vec3 tones(vec3 c){return floor(clamp(c,0.,1.)*32.+bayer()*.66+.16)/32.;}
+bool inJetShadow(vec3 p){vec2 projected=jet.xz-sun.xz*(jet.y-p.y)/sun.y;vec2 sh=p.xz-projected;vec2 sr=body[0].xz-sun.xz*body[0].y/sun.y,sf=body[2].xz-sun.xz*body[2].y/sun.y;
+ float det=sr.x*sf.y-sr.y*sf.x;if(abs(det)>.01&&p.y<jet.y){float x=abs((sh.x*sf.y-sh.y*sf.x)/det),z=(sr.x*sh.y-sr.y*sh.x)/det;
+ bool silhouette=(z>-7.5&&z<9.8&&x<min(1.9,(10.-z)*.28))||(z>-4.5&&z<4.3&&x<min(7.5,1.4+(4.3-z)*.89))||(z>-7.2&&z<-4.1&&x<4.2);
+ return silhouette;}return false;}
+vec4 project(vec3 pos){vec3 r=pos-eye;float z=dot(r,cf);return vec4(dot(r,cr)*lens*res.y/res.x,dot(r,cu)*lens,(FAR+NEAR)/(FAR-NEAR)*z-2.*FAR*NEAR/(FAR-NEAR),z);}
+vec3 haze(vec3 ray){float g=pow(max(dot(normalize(ray.xz+vec2(.0001)),normalize(sun.xz)),0.),3.);return mix(vec3(.64,.56,.69),vec3(.99,.76,.52),g);}
+vec3 atmosphere(vec3 c,float t,vec3 ray){return mix(c,haze(ray),min(.89,1.-exp(-t*.00027)));}
+`;
+      const quadVS = `#version 300 es
+void main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.-1.,0.,1.);}`;
+      const terrainFS =
+        `#version 300 es
+` +
+        common +
+        `
+uniform sampler2D mapTex,cloudMap;uniform vec4 marks[12];uniform int markCount,stripCount;uniform vec4 stripMap[12];out vec4 frag;
+vec4 sampleMap(vec2 p){return texture(mapTex,(p+4.)/L);}
+float heightAt(vec2 p){vec2 v=sampleMap(p).rg;return dot(v,vec2(65280.,255.))/40.-160.;}
+float cloudShadow(vec2 p){return texture(cloudMap,p/L).r;}
+vec3 sky(vec3 rd){
+ float y=clamp(rd.y,0.,1.),s=dot(rd,sun);
+ vec3 c=mix(haze(rd),vec3(.88,.62,.64),smoothstep(.01,.22,y));
+ c=mix(c,vec3(.44,.45,.63),smoothstep(.16,.58,y));c=mix(c,vec3(.26,.34,.52),smoothstep(.55,.92,y));
+ vec2 q=vec2((rd.x+.41*rd.z)*3.2,rd.y*7.2);
+ float streak=noise(q*vec2(.76,3.4)+10.)*.6+noise(q*vec2(1.8,11.2))*.28+noise(q*vec2(3.6,24.))*.12;
+ if(streak>.65&&rd.y>.05)c=mix(c,vec3(1.,.77,.68),streak>.70?.44:.21);
+ float g=smoothstep(.967,.999,s);c=mix(c,vec3(1.,.79,.51),g*.49);
+ if(s>.9981)c=rd.y>sun.y+.012?vec3(1.,.96,.73):rd.y>sun.y-.022?vec3(1.,.88,.60):vec3(1.,.79,.51);
+ return c;}
+void main(){vec2 uv=(gl_FragCoord.xy*2.-res)/res.y;vec3 rd=normalize(cf+(cr*uv.x+cu*uv.y)/lens);float t=1.,last=0.;bool hit=false;
+ for(int i=0;i<180;i++){vec3 p=eye+rd*t;float h=max(0.,heightAt(p.xz));float gap=p.y-h;if(gap<.42){hit=true;break;}if(t>FAR||p.y>1350.&&rd.y>0.)break;last=t;t+=clamp(gap/(max(.15,-rd.y)+.67),max(1.5,t*.0009),max(55.,t*.077));}
+ if(!hit){frag=vec4(tones(sky(rd)),1);gl_FragDepth=1.;return;}
+ for(int k=0;k<5;k++){float m=(last+t)*.5;vec3 p=eye+rd*m;if(p.y>max(0.,heightAt(p.xz)))last=m;else t=m;}
+ vec3 p=eye+rd*t;vec4 tex=sampleMap(p.xz);float h=heightAt(p.xz),b=tex.b;float rough=noise(p.xz*.039),n=noise(p.xz*.009);
+ vec3 c;float shadow=tex.a*mix(.65,1.,cloudShadow(p.xz));float px=max(.6,t/(lens*res.y));
+ if(h<.5){
+ float rip=noise(vec2(p.x*.033,p.z*.21)+vec2(tim*.58,-tim*.20));float deep=clamp(-h/62.,0.,1.);
+ c=deep<.12?vec3(.48,.73,.68):deep<.33?vec3(.32,.63,.64):deep<.63?vec3(.24,.51,.59):vec3(.16,.33,.45);
+ c=mix(c,haze(rd),.10);if(abs(rd.y)<.46)c=mix(c,sky(vec3(rd.x,-rd.y,rd.z)),.40*pow(1.-abs(rd.y),4.));if(rip>.68&&px<10.)c+=vec3(.085,.075,.06);
+ float align=dot(normalize(rd.xz+vec2(.0001)),normalize(sun.xz));float shine=smoothstep(.965,.999,align)*smoothstep(.0,.86,1.-abs(rd.y));
+ if(rip>.80-shine*.22&&shine>.12)c=mix(c,vec3(1.,.86,.59),shine*(rip>.66?.90:.55));
+ if(rip>.85)c=mix(c,vec3(.95,.89,.74),.7);
+ if(h>-3.4+1.6*sin(tim*2.+n*9.)&&rip>.31)c=vec3(.83,.86,.72);
+ }else{
+ float dx=(heightAt(p.xz+vec2(5,0))-heightAt(p.xz-vec2(5,0)))*.1,dz=(heightAt(p.xz+vec2(0,5))-heightAt(p.xz-vec2(0,5)))*.1;
+ vec3 normal=normalize(vec3(-dx,1,-dz));float slope=length(vec2(dx,dz));
+ float light=dot(normal,normalize(vec3(.52,.63,.57)));
+ if(h<5.+n*2.)c=vec3(.86,.72,.51);
+ else if(h>614.+n*50.-slope*12.)c=vec3(.91,.84,.82);
+ else if(slope>.94||h>495.+n*72.)c=mix(vec3(.39,.35,.43),vec3(.54,.48,.51),step(.51,n));
+ else if(b>.415)c=b>.59?vec3(.45,.25,.26):n>.52?vec3(.70,.40,.23):vec3(.61,.34,.25);
+ else c=mix(vec3(.60,.55,.35),vec3(.77,.65,.39),step(.46,n));
+ light+=.075*rough+.035*step(.48,fract(h*.099));float tier=floor(clamp(light,0.,1.)*5.+bayer()*.32)/5.;
+ c*=.63+tier*.53;c=mix(vec3(.28,.25,.37),c,.45+.55*shadow);
+ if(rough>.69&&px<4.)c+=vec3(.036,.034,.017);
+ }
+ if(b<.04){for(int j=0;j<12;j++){if(j>=stripCount)break;vec4 s=stripMap[j];vec2 rel=mod(p.xz-s.xy+L*.5,L)-L*.5;float x=abs(dot(rel,vec2(s.w,-s.z))),z=abs(dot(rel,s.zw));
+ if(x<22.&&z<188.){c=vec3(.44,.42,.36);if(x<19.&&z<185.){c=vec3(.245,.255,.28)+.014*rough;bool stripe=(x>17.&&x<17.85&&z<180.)||(x<.72&&mod(z+6.,26.)<12.&&z<151.)||(z>158.&&z<172.&&x<15.&&mod(x+1.,4.)<2.);
+ if(stripe)c=vec3(.90,.86,.74);}break;}}}
+ if(inJetShadow(p))c=mix(c,vec3(.20,.20,.28),.52);
+ for(int k=0;k<12;k++){if(k>=markCount)break;float d=distance(p.xz,marks[k].xy),age=marks[k].z;float ring=abs(d-(4.+age*36.));if(ring<2.4+age*1.4&&age<3.)c=mix(c,vec3(.98,.91,.75),max(0.,.80-age*.24));if(h>.5&&d<12.+n*5.){c=mix(c,vec3(.18,.15,.19),max(0.,.88-age*.023));if(age<6.&&rough>.61)c=mix(c,vec3(1.,.35,.12),.75-age*.1);}if(h<=.5&&d<22.&&age<4.&&ripPlaceholder(p.xz,tim)>.5)c=mix(c,vec3(.88,.93,.88),.7-age*.15);}
+ frag=vec4(tones(atmosphere(c,t,rd)),1);vec4 clip=project(p);gl_FragDepth=clamp(clip.z/clip.w*.5+.5,0.,1.);}
+`.replace("ripPlaceholder(p.xz,tim)", "noise(p.xz*.2+tim*.4)");
+
+      const vertexCommon =
+        common.slice(0, common.indexOf("float bayer")) +
+        common.slice(common.indexOf("vec4 project"));
+      const spriteVS =
+        `#version 300 es
+` +
+        vertexCommon +
+        `
+uniform sampler2D groundMap;layout(location=0)in vec3 center;layout(location=1)in vec4 spec;
+out vec2 uv;out vec3 surface;flat out vec4 attr;flat out vec3 base;out float dist;
+void main(){vec2 k=vec2((gl_VertexID==1||gl_VertexID==2||gl_VertexID==4)?1.:0.,(gl_VertexID==2||gl_VertexID==4||gl_VertexID==5)?1.:0.);uv=k;attr=spec;
+ base=center;bool cleared=false;if(spec.z<3.){vec4 land=textureLod(groundMap,(center.xz+4.)/L,0.);cleared=land.b<.015;base.y=dot(land.rg,vec2(65280.,255.))/40.-161.5;}base.xz+=floor((eye.xz-base.xz)/L+.5)*L;vec3 off=base-eye;dist=length(off);
+ vec3 side=length(cf.xz)>.02?normalize(vec3(cf.z,0,-cf.x)):cr;vec3 up=normalize(mix(vec3(0,1,0),cu,smoothstep(.55,.95,abs(cf.y))));
+ vec3 pos=base+side*(k.x-.5)*spec.x+up*k.y*spec.y;surface=pos;gl_Position=project(pos);
+ if(cleared||spec.z<3.&&(dist>2700.||dot(off,cf)<-25.))gl_Position=vec4(2.,2.,2.,1.);}`;
+      const spriteFS =
+        `#version 300 es
+` +
+        common +
+        `
+in vec2 uv;in vec3 surface;flat in vec4 attr;flat in vec3 base;in float dist;out vec4 frag;
+void main(){float seed=attr.w;vec2 p=uv;vec3 c;vec3 ray=normalize(base-eye);
+ if(attr.z>2.5){
+ vec2 q=vec2((p.x-.5)*4.,p.y);float best=-5.,lit=0.;for(int j=0;j<9;j++){float f=float(j);float r=hash(vec2(seed*77.,f+1.));float hill=sin((f+.2)*.37);vec2 k=vec2(-1.65+f*.40+r*.16,.16+hill*(.12+.16*r));
+ vec2 v=(q-k)/vec2(.33+.44*r+.08*hill,.12+.13*r+hill*(.13+r*.19));float a=1.-dot(v,v);if(a>best){best=a;lit=(p.y*.91+v.y*.43+v.x*.14+sqrt(max(0.,a))*.17-.14);}}
+ if(best<0.||p.y<.09+noise(vec2(q.x*3.+seed*200.,seed))*.085)discard;
+ float rag=noise(q*vec2(7.,12.)+seed*77.)*.13;float l=lit+rag;
+ c=l>.79?vec3(1.,.88,.69):l>.44?vec3(.99,.76,.62):l>.13?vec3(.89,.63,.61):l>-.09?vec3(.75,.55,.61):vec3(.61,.49,.59);
+ if(inJetShadow(surface))c*=.72;
+ c=mix(c,haze(ray),min(.43,dist*.00010));}
+ else{
+ vec2 k=floor(p*vec2(14,18))/vec2(14,18);float x=abs(k.x-.5);bool trunk=x<.075&&k.y<.55;
+ if(attr.z<.5){float branch=floor(k.y*3.);float width=(1.-k.y)*.47+.09*(1.-fract(k.y*3.));if(x>width||k.y<.13&&!trunk)discard;c=k.x>.56?vec3(.31,.37,.31):vec3(.17,.24,.26);if(k.y>.86)c+=.10;}
+ else{vec2 e=vec2((k.x-.5)*2.,(k.y-.56)*2.3);float n=dot(e,e);float jitter=hash(floor(k*vec2(9,12))+floor(seed*310.));if(n>.83+jitter*.19&&!trunk)discard;
+ vec3 low=seed<.28?vec3(.49,.23,.26):seed<.65?vec3(.63,.30,.19):vec3(.65,.47,.23);vec3 hi=seed<.28?vec3(.81,.32,.25):seed<.65?vec3(.95,.50,.23):vec3(.96,.70,.30);float l=e.y*.68+e.x*.47+.45+jitter*.37;c=mix(low,hi,l>.90?1.:l>.45?.64:.13);if(trunk&&k.y<.27)c=vec3(.29,.24,.25);}
+ c*=.76+.24*fract(seed*19.);c=atmosphere(c,dist,ray);}
+ frag=vec4(tones(c),1);}
+`;
+      let rngState = 29173;
+      function random() {
+        rngState = (Math.imul(rngState, 1664525) + 1013904223) >>> 0;
+        return rngState / 4294967296;
+      }
+      function makeScenery() {
+        const instances = [],
+          clouds = [];
+        for (let i = 0; i < 96000; i++) {
+          let x = random() * PERIOD,
+            z = random() * PERIOD,
+            k = (Math.floor(z / CELL) * SIZE + Math.floor(x / CELL)) * 2,
+            h = fields[k],
+            b = fields[k + 1];
+          if (h < 4 || h > 510 || random() > (b - 0.31) * 2.55) continue;
+          let pine = random() < 0.1 + Math.max(0, h - 193) / 350;
+          let s = 0.7 + random() * 0.8;
+          instances.push(
+            x,
+            h - 1.5,
+            z,
+            (pine ? 8 : 12) * s,
+            (pine ? 21 : 14) * s,
+            pine ? 0 : 1,
+            random(),
+          );
+        }
+        for (let i = 0; i < 103; i++) {
+          let x = random() * PERIOD,
+            z = random() * PERIOD;
+          let dx = mod(x + PERIOD / 2, PERIOD) - PERIOD / 2,
+            dz = mod(z + PERIOD / 2, PERIOD) - PERIOD / 2;
+          if (Math.hypot(dx, dz) < 660) continue;
+          let wide = 130 + random() * 390,
+            high = wide * (0.16 + random() * 0.13),
+            y = 157 + random() * 64;
+          if (ground(x, z) > y - high * 0.3) continue;
+          clouds.push([x, y, z, wide, high, 3, random()]);
+        }
+        // A few higher banks hang above the far ridges.
+        for (let i = 0; i < 22; i++) {
+          let x = random() * PERIOD,
+            z = random() * PERIOD;
+          if (
+            Math.hypot(Math.min(x, PERIOD - x), Math.min(z, PERIOD - z)) < 1300
+          )
+            continue;
+          clouds.push([
+            x,
+            460 + random() * 160,
+            z,
+            290 + random() * 430,
+            62 + random() * 92,
+            3,
+            random(),
+          ]);
+        }
+        const mask = new Uint8Array(256 * 256).fill(255);
+        for (let [x, y, z, w, h] of clouds) {
+          let cx = (x - (y * 0.324) / 0.194) / 24,
+            cz = (z - (y * 0.926) / 0.194) / 24,
+            a = w / 49,
+            b = h / 32;
+          for (let j = -Math.ceil(b); j <= b; j++)
+            for (let i = -Math.ceil(a); i <= a; i++) {
+              let d = (i * i) / (a * a) + (j * j) / (b * b);
+              if (d < 1)
+                mask[
+                  mod(Math.round(cz) + j, 256) * 256 +
+                    mod(Math.round(cx) + i, 256)
+                ] = 255 * Math.min(1, d * 0.8);
+            }
+        }
+        return {
+          data: new Float32Array(instances.concat(clouds.flat())),
+          mask,
+        };
+      }
+      const add = (a, b) => a.map((v, i) => v + b[i]),
+        sub = (a, b) => a.map((v, i) => v - b[i]),
+        mul = (a, k) => a.map((v) => v * k),
+        dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0),
+        cross = (a, b) => [
+          a[1] * b[2] - a[2] * b[1],
+          a[2] * b[0] - a[0] * b[2],
+          a[0] * b[1] - a[1] * b[0],
+        ],
+        unit = (a) => mul(a, 1 / (Math.hypot(...a) || 1)),
+        lerpV = (a, b, t) => a.map((v, i) => mix(v, b[i], t));
+      function buildJet() {
+        let vertices = [];
+        const paint = {
+          light: "#c6bdb1",
+          body: "#a9a8a4",
+          slate: "#717888",
+          dark: "#424855",
+          edge: "#555862",
+          red: "#e76546",
+          tip: "#343b48",
+          glass: "#edac58",
+          cream: "#ffe3a0",
+          metal: "#62636b",
+          hot: "#ffb569",
+          white: "#f3eadd",
+        };
+        const rgb = (h) => {
+          h = paint[h] || h;
+          return [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+        };
+        function tri(a, b, c, color, part = 0) {
+          let n = unit(cross(sub(b, a), sub(c, a)));
+          if (n[1] < 0) n = mul(n, -1);
+          for (let p of [a, b, c])
+            vertices.push(...p, ...n, ...rgb(color), part);
+        }
+        function face(points, color, part = 0) {
+          for (let i = 1; i < points.length - 1; i++)
+            tri(points[0], points[i], points[i + 1], color, part);
+        }
+        function rings(sections, colors, part = 0) {
+          for (let j = 1; j < sections.length; j++) {
+            let a = sections[j - 1],
+              b = sections[j];
+            for (let i = 0; i < a.length; i++) {
+              let k = (i + 1) % a.length;
+              face([a[i], a[k], b[k], b[i]], colors(j, i), part);
+            }
+          }
+          face(sections[0], colors(0, 0), part);
+          face(sections.at(-1), colors(sections.length, 0), part);
+        }
+        function tube(cx, cy, sections, color, sides = 8, part = 0) {
+          rings(
+            sections.map(([z, w, h, dy = 0]) =>
+              Array.from({ length: sides }, (_, i) => {
+                let a = (TAU * (i + 0.5)) / sides;
+                return [cx + w * Math.sin(a), cy + dy + h * Math.cos(a), z];
+              }),
+            ),
+            color,
+            part,
+          );
+        }
+        tube(
+          0,
+          0.03,
+          [
+            [-7, 1.32, 0.58],
+            [-3, 1.75, 0.94],
+            [2.4, 1.47, 0.98],
+            [5.4, 1.05, 0.81],
+            [7.6, 0.69, 0.54],
+            [10.45, 0.045, 0.05],
+          ],
+          (j, i) =>
+            j >= 5
+              ? "tip"
+              : i === 0 || i === 7
+                ? "light"
+                : i === 1 || i === 6
+                  ? "body"
+                  : "slate",
+        );
+        for (let s of [-1, 1]) {
+          let wing = [
+            [1.05, 0.18, 4.5],
+            [3.05, 0.22, 1.4],
+            [7.76, -0.17, -3.0],
+            [7.62, -0.18, -4.48],
+            [3.1, 0.12, -4.87],
+            [1.1, 0.23, -4.13],
+          ].map(([x, y, z]) => [s * x, y, z]);
+          face(wing, "body");
+          let bottom = wing.map(([x, y, z]) => [x, y - 0.25, z]);
+          face(bottom, "slate");
+          for (let i = 0; i < wing.length; i++) {
+            let j = (i + 1) % wing.length;
+            face([wing[i], wing[j], bottom[j], bottom[i]], "edge");
+          }
+          function decal(arr, color) {
+            face(
+              arr.map(([x, z]) => [x * s, 0.314 - 0.071 * (x - 1), z]),
+              color,
+            );
+          }
+          decal(
+            [
+              [1.7, 3.2],
+              [3.15, 1.26],
+              [4.68, -0.2],
+              [3.35, -0.62],
+              [2.76, -0.12],
+              [1.75, -0.65],
+            ],
+            "slate",
+          );
+          decal(
+            [
+              [3.9, -1.65],
+              [5.1, -1.63],
+              [6.36, -2.3],
+              [5.42, -2.85],
+              [6.93, -4.38],
+              [4.95, -4.57],
+              [3.39, -3.13],
+            ],
+            "slate",
+          );
+          decal(
+            [
+              [6.95, -2.7],
+              [7.68, -3.14],
+              [7.57, -4.35],
+              [6.98, -4.36],
+            ],
+            "light",
+          );
+          // National marking: a pair of vermilion bars on each outer wing.
+          decal(
+            [
+              [5.79, -2.42],
+              [6.01, -2.56],
+              [6.49, -3.39],
+              [6.22, -3.41],
+            ],
+            "red",
+          );
+          decal(
+            [
+              [6.19, -2.55],
+              [6.4, -2.66],
+              [6.82, -3.39],
+              [6.56, -3.4],
+            ],
+            "red",
+          );
+          tube(
+            s * 1.46,
+            -0.26,
+            [
+              [-7.74, 0.64, 0.7],
+              [-7.31, 0.79, 0.81],
+              [-4.9, 0.91, 0.95],
+              [0.3, 0.96, 0.91],
+              [2.02, 0.7, 0.65],
+            ],
+            (j, i) =>
+              j <= 1
+                ? "metal"
+                : i === 0 || i === 7
+                  ? "body"
+                  : i === 1 || i === 6
+                    ? "slate"
+                    : "edge",
+          );
+          tube(
+            s * 1.46,
+            -0.26,
+            [
+              [-7.81, 0.51, 0.54],
+              [-7.76, 0.61, 0.63],
+            ],
+            () => "dark",
+          );
+          tube(
+            s * 1.46,
+            -0.26,
+            [
+              [-7.86, 0.36, 0.36],
+              [-7.83, 0.5, 0.52],
+            ],
+            () => "hot",
+          );
+          tube(
+            s * 1.46,
+            -0.26,
+            [
+              [-7.9, 0.23, 0.23],
+              [-7.88, 0.32, 0.32],
+            ],
+            () => "cream",
+          );
+          face(
+            [
+              [0.88 * s, 0.24, 2.04],
+              [2.13 * s, 0.16, 2.04],
+              [2.04 * s, -0.66, 2.04],
+              [0.92 * s, -0.66, 2.04],
+            ],
+            "dark",
+          );
+          let tail = [
+            [1.6, 0.03, -4.81],
+            [2.5, 0.06, -4.5],
+            [4.7, -0.1, -6.85],
+            [4.57, -0.14, -7.72],
+            [1.67, -0.1, -7.07],
+          ].map(([x, y, z]) => [s * x, y, z]);
+          face(tail, "light");
+          face(
+            [
+              tail[1],
+              tail[2],
+              [3.43 * s, -0.02, -6.71],
+              [2.44 * s, 0.045, -5.95],
+            ],
+            "slate",
+          );
+          let fin = (x, y, z) => [s * x, y, z];
+          let a = fin(1.45, 0.33, -2.6),
+            b = fin(2.44, 3.68, -5.18),
+            c = fin(2.5, 3.77, -6.69),
+            d = fin(1.6, 0.46, -7.19);
+          // Use adjoining paint bands: the inside and outside faces stay solid from either camera.
+          const bands = [
+            [0, 0, "body"],
+            [0.52, 0.46, "cream"],
+            [0.57, 0.51, "body"],
+            [0.65, 0.56, "slate"],
+            [0.81, 0.81, "red"],
+            [1, 1, null],
+          ];
+          const inner = (p) => add(p, [-s * 0.16, 0, 0]);
+          for (let j = 0; j < bands.length - 1; j++) {
+            const [front, back, color] = bands[j],
+              [nextFront, nextBack] = bands[j + 1];
+            const corners = [
+              lerpV(a, b, front),
+              lerpV(a, b, nextFront),
+              lerpV(d, c, nextBack),
+              lerpV(d, c, back),
+            ];
+            face(corners, color);
+            face(corners.map(inner), color);
+            face(
+              [corners[0], corners[1], inner(corners[1]), inner(corners[0])],
+              color === "red" ? "red" : "light",
+            );
+            face(
+              [corners[2], corners[3], inner(corners[3]), inner(corners[2])],
+              "edge",
+            );
+          }
+          face([b, c, inner(c), inner(b)], "red");
+          for (let j = 0; j < 2; j++) {
+            let x = s * (4.1 + 2.79 * j),
+              z = -1.15 - j * 1.18,
+              part = 1 + 2 * (s > 0) + j;
+            tube(
+              x,
+              -0.53,
+              [
+                [z - 2.28, 0.115, 0.115],
+                [z - 1.86, 0.17, 0.17],
+                [z + 1.37, 0.17, 0.17],
+                [z + 2.15, 0, 0],
+              ],
+              (k) => (k === 3 ? "tip" : "white"),
+              6,
+              part,
+            );
+            for (let a = 0; a < 4; a++) {
+              let dx = Math.cos((a * Math.PI) / 2),
+                dy = Math.sin((a * Math.PI) / 2);
+              face(
+                [
+                  [x, -0.53, z - 1.18],
+                  [x + dx * 0.54, -0.53 + dy * 0.54, z - 2.19],
+                  [x, -0.53, z - 1.99],
+                ],
+                "slate",
+                part,
+              );
+            }
+          }
+        }
+        tube(
+          0,
+          0.72,
+          [
+            [0.06, 0.53, 0.12],
+            [0.57, 0.86, 0.53],
+            [2.28, 0.91, 1.06],
+            [3.84, 0.72, 0.85],
+            [5.17, 0.28, 0.29],
+            [5.4, 0.05, 0.04],
+          ],
+          (j, i) =>
+            j === 1
+              ? "edge"
+              : i === 0 || i === 7
+                ? j === 3
+                  ? "cream"
+                  : "glass"
+                : i === 1 || i === 6
+                  ? "#bd864c"
+                  : "#564950",
+        );
+        tube(
+          0,
+          0.72,
+          [
+            [2.22, 0.92, 1.07],
+            [2.36, 0.92, 1.07],
+          ],
+          () => "edge",
+        );
+        // A shallow dorsal spine blends the twin engine bays into the canopy.
+        tube(
+          0,
+          0.78,
+          [
+            [-6.6, 0.17, 0.08],
+            [-4.2, 0.43, 0.28],
+            [-1.1, 0.59, 0.38],
+            [0.45, 0.54, 0.28],
+          ],
+          (j, i) => (i === 7 || i === 0 ? "light" : "slate"),
+        );
+        for (let s of [-1, 1]) {
+          face(
+            [
+              [1.12 * s, 0.64, -4.8],
+              [1.74 * s, 0.64, -4.8],
+              [1.69 * s, 0.59, -6.3],
+              [1.21 * s, 0.63, -6.12],
+            ],
+            "metal",
+          );
+          for (let k = 0; k < 4; k++)
+            face(
+              [
+                [1.19 * s, 0.665, -4.97 - k * 0.25],
+                [1.64 * s, 0.665, -4.97 - k * 0.25],
+                [1.64 * s, 0.664, -5.04 - k * 0.25],
+                [1.19 * s, 0.664, -5.04 - k * 0.25],
+              ],
+              "dark",
+            );
+        }
+        face(
+          [
+            [-0.58, 1.04, -1.18],
+            [0.57, 1.04, -1.18],
+            [0.58, 0.94, -3.35],
+            [-0.59, 0.94, -3.35],
+          ],
+          "edge",
+        );
+        for (let i = 0; i < 5; i++)
+          face(
+            [
+              [-0.5, 1.05 - i * 0.016, -1.35 - i * 0.35],
+              [0.5, 1.05 - i * 0.016, -1.35 - i * 0.35],
+              [0.5, 1.05 - i * 0.016, -1.45 - i * 0.35],
+              [-0.5, 1.05 - i * 0.016, -1.45 - i * 0.35],
+            ],
+            "light",
+          );
+        // Three retractable wheels and their struts share the airframe depth buffer.
+        for (let [x, z] of [
+          [-1.84, -2.1],
+          [1.84, -2.1],
+          [0, 4.1],
+        ]) {
+          let size = x ? 0.42 : 0.32,
+            y = -1.52 + size;
+          face(
+            [
+              [x - 0.1, -0.25, z],
+              [x + 0.1, -0.25, z],
+              [x + 0.1, y, z],
+              [x - 0.1, y, z],
+            ],
+            "metal",
+            -1,
+          );
+          const sides = [-0.14, 0.14].map((side) =>
+            Array.from({ length: 8 }, (_, j) => [
+              x + side,
+              y + Math.cos((j * TAU) / 8) * size,
+              z + Math.sin((j * TAU) / 8) * size,
+            ]),
+          );
+          rings(sides, () => "tip", -1);
+        }
+        return new Float32Array(vertices);
+      }
+      const jetVS =
+        `#version 300 es
+` +
+        vertexCommon +
+        `
+layout(location=0)in vec3 pos;layout(location=1)in vec3 norm;layout(location=2)in vec3 col;layout(location=3)in float rail;uniform float enemyPaint,gearDown;uniform vec4 loaded;flat out vec3 color;
+void main(){vec3 n=body*norm;float shade=dot(n,normalize(vec3(-.42,.82,.39)));float val=shade>.68?1.07:shade>.10?.94:.77;color=mix(col,vec3(col.r*.68+.21,col.g*.48,col.b*.52),enemyPaint)*val;gl_Position=project(jet+body*pos);if((rail<-.5&&gearDown<.5)||(rail>.5&&loaded[clamp(int(rail)-1,0,3)]<.5))gl_Position=vec4(2,2,2,1);}`;
+      const jetFS = `#version 300 es
+precision highp float;flat in vec3 color;out vec4 frag;void main(){frag=vec4(color,1.);}`;
+      const edgeFS = `#version 300 es
+precision highp float;uniform sampler2D layer;out vec4 frag;void main(){ivec2 a=ivec2(gl_FragCoord.xy);vec4 c=texelFetch(layer,a,0);if(c.a>.1){frag=c;return;}float n=texelFetch(layer,a+ivec2(1,0),0).a+texelFetch(layer,a-ivec2(1,0),0).a+texelFetch(layer,a+ivec2(0,1),0).a+texelFetch(layer,a-ivec2(0,1),0).a;if(n<.5)discard;frag=vec4(.19,.19,.24,1.);}`;
+      const plane = {
+        p: [0, 283, 0],
+        yaw: 0.87,
+        pitch: 0.025,
+        bank: -0.16,
+        speed: 103,
+        vs: 0,
+        g: 1,
+        turn: 0,
+        slip: 0,
+        velocity: null,
+        ground: 0,
+        rh: 283,
+        throttle: 0,
+      };
+      let started = false,
+        steered = false,
+        mode = 0,
+        transition = null,
+        boost = false,
+        leftDown = false,
+        heldFor = 0,
+        rollTime = -1,
+        rollAngle = 0,
+        aim = [0, 0],
+        sim = 0,
+        flightTime = 0,
+        cam,
+        bodyAxes,
+        previousCamera,
+        ready = false;
+      const arrowKeys = new Set(),
+        rearInputs = new Set();
+      let keyboardSteering = false;
+      function setRear(source, held) {
+        if (held && started) rearInputs.add(source);
+        else rearInputs.delete(source);
+        $("view").lastElementChild.textContent = rearInputs.size
+          ? "REAR VIEW"
+          : views[mode];
+      }
+      function clearFlightKeys() {
+        arrowKeys.clear();
+        rearInputs.clear();
+        keyboardSteering = false;
+        aim = [0, 0];
+        $("view").lastElementChild.textContent = views[mode];
+      }
+      function rearCamera(side = 0) {
+        const [right, up, forward] = bodyAxes;
+        const eye = side ? local(side * 1.48, 3.55, 3.8) : local(0, 4.85, 3.0);
+        eye[1] = Math.max(eye[1], Math.max(0, ground(eye[0], eye[2])) + 0.8);
+        const direction = unit(
+          add(
+            mul(forward, -1),
+            add(mul(right, side * 0.59), mul(up, side ? -0.075 : -0.055)),
+          ),
+        );
+        return pose(eye, direction, up);
+      }
+      const views = ["CHASE CAM", "COCKPIT", "TOP-DOWN"],
+        rails = [0, 0, 0, 0],
+        missiles = [],
+        particles = [],
+        impacts = [],
+        trails = [[], []];
+      let lastStore = -1,
+        shotClock = 0,
+        trailClock = 0,
+        noticeUntil = 0;
+      function axes(y, p, b) {
+        let f = [
+            Math.sin(y) * Math.cos(p),
+            Math.sin(p),
+            Math.cos(y) * Math.cos(p),
+          ],
+          r = [Math.cos(y), 0, -Math.sin(y)],
+          u = unit(cross(f, r));
+        return [
+          add(mul(r, Math.cos(b)), mul(u, -Math.sin(b))),
+          add(mul(r, Math.sin(b)), mul(u, Math.cos(b))),
+          f,
+        ];
+      }
+      function local(x, y, z) {
+        return add(
+          plane.p,
+          add(
+            mul(bodyAxes[0], x),
+            add(mul(bodyAxes[1], y), mul(bodyAxes[2], z)),
+          ),
+        );
+      }
+      function pose(eye, f, up) {
+        let r = unit(cross(up, f));
+        return { eye, f: unit(f), r, u: unit(cross(f, r)) };
+      }
+      function cameraPose() {
+        const p = plane.p;
+        if (!started) {
+          let narrow = $("stage").clientWidth / $("stage").clientHeight < 1,
+            dist = narrow ? 46 : 29.4;
+          let e = add(p, [0, dist * 0.155, -dist]),
+            target = add(p, [narrow ? -1.8 : -8.6, narrow ? -6.7 : 3.45, 0]);
+          return pose(e, unit(sub(target, e)), [0, 1, 0]);
+        }
+        if (mode === 2)
+          return pose(
+            add(p, [0, clamp(65 + plane.rh * 0.11, 70, 145), -0.03]),
+            [0, -1, 0.0001],
+            [0, 0, 1],
+          );
+        if (mode === 0 && landing?.phase === "parked") {
+          let [r, u, f] = axes(plane.yaw, 0, 0);
+          let side = add(
+            plane.p,
+            add(mul(r, -15), add(mul(f, -22), [0, 6, 0])),
+          );
+          return pose(
+            side,
+            unit(sub(add(plane.p, [0, 1, 0]), side)),
+            [0, 1, 0],
+          );
+        }
+        if (mode === 1)
+          return pose(local(0, 1.89, 3.15), bodyAxes[2], bodyAxes[1]);
+        let [r, u, f] = axes(plane.yaw, plane.pitch * 0.68, plane.bank * 0.24);
+        let e = add(add(p, mul(f, -28)), mul(u, 8.7));
+        e[1] = Math.max(e[1], Math.max(0, ground(e[0], e[2])) + 3);
+        return pose(e, unit(sub(add(p, add(mul(f, 9), mul(u, 1.75))), e)), u);
+      }
+      function updateCamera(dt) {
+        let dest = cameraPose();
+        if (transition) {
+          transition.t += dt / 1.03;
+          let v = clamp(transition.t, 0, 1),
+            s = v * v * (3 - 2 * v);
+          let e = lerpV(transition.from.eye, dest.eye, s);
+          // Stay above every ridge along the camera's path.
+          e[1] = Math.max(e[1], Math.max(0, ground(e[0], e[2])) + 1.2);
+          let f = unit(lerpV(transition.from.f, dest.f, s)),
+            up = unit(lerpV(transition.from.u, dest.u, s));
+          if (Math.abs(dot(f, up)) > 0.999) up = dest.u;
+          cam = pose(e, f, up);
+          if (v >= 1) transition = null;
+        } else cam = dest;
+      }
+      function cycleView() {
+        if (!ready || rearInputs.size) return;
+        if (!started) launch();
+        transition = { from: cam, t: 0, fromCockpit: mode === 1 };
+        mode = (mode + 1) % 3;
+        document.body.classList.toggle("cockpitMode", mode === 1);
+        $("view").lastElementChild.textContent = views[mode];
+      }
+      function message(msg, t = 1.5) {
+        $("notice").textContent = msg;
+        noticeUntil = sim + t;
+      }
+      // The title and active flight are two screens within the same HTML document.
+      // Send their views explicitly so a replay counts once and a camera change counts zero.
+      function recordScreen(path) {
+        window.va?.("pageview", { path, route: path });
+      }
+
+      function startWebAnalytics() {
+        if (!["https:", "http:"].includes(location.protocol)) return;
+        window.va = window.va || function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+        const script = document.createElement("script");
+        script.src = "/_vercel/insights/script.js";
+        script.dataset.disableAutoTrack = "1";
+        script.async = true;
+        document.head.appendChild(script);
+        recordScreen("/");
+      }
+
+      function launch() {
+        if (!ready || started) return;
+        started = true;
+        recordScreen("/play");
+        nextEnemy = sim + 1.3;
+        nextStrip = 550;
+        sortieUI();
+        document.body.classList.add("flying");
+        transition = { from: cam, t: 0 };
+        $("start").blur();
+        $("view").blur();
+        flightTime = 0;
+        updateStores();
+      }
+      function barrel() {
+        if (airborne() && rollTime < 0) {
+          rollTime = 0;
+          tone(185, 0.09, "triangle", 0.032);
+        }
+      }
+      function fire() {
+        if (!ready || !airborne()) return;
+        if (shotClock > 0.001) return;
+        let i = -1;
+        for (let k = 1; k <= 4; k++) {
+          let j = (lastStore + k) % 4;
+          if (rails[j] <= 0) {
+            i = j;
+            break;
+          }
+        }
+        if (i < 0) {
+          message("REARMING", 0.7);
+          return;
+        }
+        lastStore = i;
+        rails[i] = 5.8;
+        shotClock = 0.16;
+        let s = i < 2 ? -1 : 1,
+          j = i % 2,
+          p = local(s * (4.1 + j * 2.79), -0.54, -0.8 - j * 1.2),
+          f = bodyAxes[2].slice();
+        let target = acquire(0.22, 1000);
+        if (target) f = unit(sub(target.p, p));
+        else if (Math.abs(plane.pitch) < 0.13) {
+          let range = clamp(plane.rh * 2.85, 160, 1350),
+            x = p[0] + Math.sin(plane.yaw) * range,
+            z = p[2] + Math.cos(plane.yaw) * range;
+          f = unit(sub([x, Math.max(0, ground(x, z)), z], p));
+        }
+        missiles.push({ p, dir: f, target, age: 0, smoke: 0 });
+        tone(320, 0.26, "sawtooth", 0.055, 60);
+        updateStores();
+      }
+      function particle(p, v, size, life, kind) {
+        if (particles.length >= 1000) particles.shift();
+        particles.push({
+          p: p.slice(),
+          v,
+          size,
+          life,
+          ttl: life,
+          kind,
+          seed: random(),
+        });
+      }
+      function strike(p, water) {
+        if (impacts.length === 12) impacts.shift();
+        impacts.push({ p: p.slice(), age: 0, water });
+        for (let i = 0; i < 45; i++) {
+          let a = random() * TAU,
+            r = random() * (water ? 18 : 13),
+            v = [
+              Math.cos(a) * r,
+              (water ? 28 : 12) + random() * (water ? 42 : 26),
+              Math.sin(a) * r,
+            ];
+          particle(
+            add(p, [0, 2, 0]),
+            v,
+            3 + random() * 6,
+            (water ? 1.1 : 1.6) + random(),
+            water ? "spray" : i % 3 ? "flame" : "smoke",
+          );
+        }
+        if (water)
+          for (let i = 0; i < 11; i++)
+            particle(
+              add(p, [0, 2, 0]),
+              [(random() - 0.5) * 16, 8 + random() * 14, (random() - 0.5) * 16],
+              4 + random() * 6,
+              0.28 + random() * 0.24,
+              "flame",
+            );
+        for (let i = 0; i < 14; i++)
+          particle(
+            add(p, [(random() - 0.5) * 15, 3, (random() - 0.5) * 15]),
+            [(random() - 0.5) * 4, 6 + random() * 7, (random() - 0.5) * 4],
+            5 + random() * 7,
+            water ? 2.4 : 4 + random() * 4,
+            water ? "mist" : "smoke",
+          );
+        tone(115, 0.48, "sawtooth", 0.12, 27);
+      }
+      function updateStores() {
+        $("count").textContent =
+          String(rails.filter((x) => x <= 0).length).padStart(2, "0") + " / 04";
+        let g = $("stores").getContext("2d");
+        g.clearRect(0, 0, 57, 15);
+        rails.forEach((v, i) => {
+          g.fillStyle = v > 0 ? "#555257" : "#efa269";
+          let x = 2 + i * 14;
+          g.fillRect(x + 4, 2, 2, 10);
+          g.fillRect(x + 3, 4, 4, 6);
+          g.fillRect(x + 1, 9, 8, 2);
+          g.fillRect(x + 3, 12, 4, 1);
+        });
+      }
+      function tick(dt) {
+        sim += dt;
+        if (noticeUntil && sim > noticeUntil) {
+          $("notice").textContent = "";
+          noticeUntil = 0;
+        }
+        if (leftDown) {
+          heldFor += dt;
+          if (heldFor > 0.19 && !sources.boost.has("mouseHold"))
+            holdAction("boost", "mouseHold", true);
+        }
+        let gain = (t) => 1 - Math.exp(-dt * t);
+        if (!started) {
+          plane.p = [
+            Math.sin(sim * 0.019) * 12,
+            283 + Math.sin(sim * 0.34) * 0.52,
+            Math.sin(sim * 0.014) * 17,
+          ];
+          plane.bank = 0.37 + Math.sin(sim * 0.28) * 0.046;
+          plane.yaw = 0.8 + Math.sin(sim * 0.12) * 0.11;
+          plane.pitch = 0.045 + Math.sin(sim * 0.34) * 0.017;
+        } else if (health <= 0) {
+          downTime -= dt;
+          if (downTime <= 0) {
+            let result = "AIRCRAFT LOST · " + kills + " KILLS";
+            resetSortie(result);
+            return;
+          }
+        } else if (landing) {
+          flightTime += dt;
+          updateLanding(dt);
+        } else {
+          flightTime += dt;
+          let turn, pitch;
+          if (padSteering) {
+            turn = padAim[0];
+            pitch = -padAim[1] * (config.invertPitch ? -1 : 1) * 0.64;
+          } else if (keyboardSteering) {
+            turn =
+              Number(arrowKeys.has("ArrowRight")) -
+              Number(arrowKeys.has("ArrowLeft"));
+            pitch =
+              (Number(arrowKeys.has("ArrowUp")) -
+                Number(arrowKeys.has("ArrowDown"))) *
+              0.64;
+          } else if (!steered) {
+            turn = 0.24 * Math.sin(flightTime * 0.2 + 0.8);
+            pitch = 0.015 * Math.sin(flightTime * 0.29);
+          } else if (mode === 2) {
+            let desired = Math.atan2((aim[0] * W) / H, -aim[1]);
+            turn =
+              Math.hypot(...aim) > 0.055
+                ? clamp(wrap(desired - plane.yaw) * 1.65, -1, 1)
+                : 0;
+            pitch = clamp((240 - plane.rh) * 0.0013, -0.17, 0.17);
+          } else {
+            turn = clamp(aim[0] * 1.22, -1, 1);
+            pitch = clamp(
+              -aim[1] * 0.74 * (config.invertPitch ? -1 : 1),
+              -0.7,
+              0.74,
+            );
+          }
+          const turnGain = steered ? config.yawGain / 100 : 1,
+            pitchGain = steered ? config.pitchGain / 100 : 1;
+          if (keyboardSteering || padSteering || (steered && mode !== 2))
+            pitch = clamp(pitch * pitchGain, -0.82, 1.08);
+          plane.throttle = mix(plane.throttle, boost ? 1 : 0, gain(3));
+          plane.speed = mix(
+            plane.speed,
+            104 + plane.throttle * 78 - plane.pitch * 19,
+            gain(0.8),
+          );
+          plane.turn = mix(
+            plane.turn,
+            turn * 0.78 * turnGain,
+            gain(3.3 * Math.sqrt(turnGain)),
+          );
+          plane.yaw += plane.turn * dt;
+          plane.bank = mix(
+            plane.bank,
+            clamp(turn * turnGain, -1.15, 1.15) * 1.01,
+            gain(3.4 * Math.sqrt(turnGain)),
+          );
+          let floor = Math.max(0, ground(plane.p[0], plane.p[2])),
+            sx = Math.sin(plane.yaw),
+            cz = Math.cos(plane.yaw);
+          for (let s of [0.22, 0.48, 0.82, 1.25, 1.7]) {
+            let d = plane.speed * s,
+              h = ground(plane.p[0] + sx * d, plane.p[2] + cz * d);
+            let reserve = Math.max(0, h) + (h > 0 ? 11 : 4.3);
+            if (plane.p[1] + pitch * d < reserve)
+              pitch = Math.max(
+                pitch,
+                Math.atan2(reserve - plane.p[1], d) * 1.16,
+              );
+          }
+          if (plane.p[1] > 1000)
+            pitch = Math.min(pitch, (1200 - plane.p[1]) * 0.003);
+          plane.pitch = mix(
+            plane.pitch,
+            clamp(pitch, -0.78, 1.08),
+            gain(2.45 * Math.sqrt(pitchGain)),
+          );
+          plane.vs = Math.sin(plane.pitch) * plane.speed;
+          plane.p[0] += sx * Math.cos(plane.pitch) * plane.speed * dt;
+          plane.p[2] += cz * Math.cos(plane.pitch) * plane.speed * dt;
+          let raw = ground(plane.p[0], plane.p[2]);
+          plane.ground = Math.max(0, raw);
+          let prevY = plane.p[1];
+          plane.p[1] = Math.max(
+            plane.ground + (raw > 0 ? 6 : 3.6),
+            plane.p[1] + plane.vs * dt,
+          );
+          plane.vs = (plane.p[1] - prevY) / dt;
+          plane.rh = plane.p[1] - plane.ground;
+        }
+        if (rollTime >= 0) {
+          rollTime += dt / 1.14;
+          let k = clamp(rollTime, 0, 1);
+          rollAngle = TAU * k * k * (3 - 2 * k);
+          if (k >= 1) {
+            rollTime = -1;
+            rollAngle = 0;
+          }
+        }
+        bodyAxes = axes(plane.yaw, plane.pitch, plane.bank + rollAngle);
+        if (started) {
+          let horizontal = plane.speed * Math.cos(plane.pitch),
+            v = [
+              Math.sin(plane.yaw) * horizontal,
+              plane.vs,
+              Math.cos(plane.yaw) * horizontal,
+            ];
+          if (plane.velocity) {
+            let force = add(mul(sub(v, plane.velocity), 1 / dt), [0, 9.81, 0]);
+            plane.g = mix(plane.g, dot(force, bodyAxes[1]) / 9.81, gain(6));
+            plane.slip = mix(
+              plane.slip,
+              clamp(-dot(force, bodyAxes[0]) / 9.81, -1, 1),
+              gain(4),
+            );
+          }
+          plane.velocity = v;
+        }
+        if (started && health > 0) {
+          if (landing) {
+            for (let i = enemies.length - 1; i >= 0; i--) {
+              let e = enemies[i];
+              e.p = add(e.p, mul(e.v, dt));
+              e.p[1] += 25 * dt;
+              if (Math.hypot(...sub(e.p, plane.p)) > 850) enemies.splice(i, 1);
+            }
+          } else updateFighters(dt);
+          updateRounds(dt);
+          updateDiscovery(dt);
+          checkFlyInLanding();
+        }
+        shotClock = Math.max(0, shotClock - dt);
+        rails.forEach((v, i) => {
+          if (v > 0) {
+            rails[i] = Math.max(0, v - dt);
+            if (rails[i] === 0) updateStores();
+          }
+        });
+        for (let i = missiles.length - 1; i >= 0; i--) {
+          let m = missiles[i];
+          m.age += dt;
+          if (m.target && enemies.includes(m.target)) {
+            let intercept = add(
+              m.target.p,
+              mul(
+                m.target.v,
+                Math.min(0.8, Math.hypot(...sub(m.target.p, m.p)) / 425),
+              ),
+            );
+            m.dir = unit(
+              lerpV(m.dir, unit(sub(intercept, m.p)), 1 - Math.exp(-dt * 7)),
+            );
+          } else m.target = null;
+          let next = add(m.p, mul(m.dir, (345 + Math.min(1, m.age) * 95) * dt));
+          if (missileHit(m, next, dt)) {
+            missiles.splice(i, 1);
+            continue;
+          }
+          if (m.age > 2.4 && !m.target)
+            m.dir = unit(add(m.dir, [0, -0.17 * dt, 0]));
+          if (next[1] <= Math.max(0, ground(next[0], next[2]))) {
+            let lo = m.p,
+              hi = next;
+            for (let j = 0; j < 6; j++) {
+              let k = lerpV(lo, hi, 0.5);
+              if (k[1] > Math.max(0, ground(k[0], k[2]))) lo = k;
+              else hi = k;
+            }
+            let h = ground(hi[0], hi[2]);
+            hi[1] = Math.max(0, h) + 0.8;
+            strike(hi, h <= 0);
+            missiles.splice(i, 1);
+            continue;
+          }
+          m.smoke += dt;
+          while (m.smoke > 0.025) {
+            m.smoke -= 0.025;
+            particle(
+              lerpV(next, m.p, clamp(m.smoke / dt, 0, 1)),
+              [0.32, 1.4, 0],
+              1.2,
+              0.95 + random() * 0.45,
+              "trail",
+            );
+          }
+          m.p = next;
+          if (m.age > 12) missiles.splice(i, 1);
+        }
+        for (let i = particles.length - 1; i >= 0; i--) {
+          let p = particles[i];
+          p.ttl -= dt;
+          if (p.ttl <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+          p.p = add(p.p, mul(p.v, dt));
+          if (p.kind === "spray") p.v[1] -= 38 * dt;
+          if (p.kind === "flame") {
+            p.v = mul(p.v, Math.exp(-dt * 1.3));
+            p.v[1] += 3 * dt;
+          }
+        }
+        for (let i = impacts.length - 1; i >= 0; i--) {
+          impacts[i].age += dt;
+          if (impacts[i].age > 32) impacts.splice(i, 1);
+        }
+        if (airborne() || (landing && plane.speed > 30)) {
+          trailClock += dt;
+          if (trailClock > 0.045) {
+            trailClock = 0;
+            for (let i = 0; i < 2; i++) {
+              trails[i].push({
+                p: local((i ? 1 : -1) * 7.54, -0.16, -4.25),
+                t: sim,
+              });
+              if (trails[i].length > 20) trails[i].shift();
+            }
+            if (plane.rh < 13 && ground(plane.p[0], plane.p[2]) < 0) {
+              for (let k = 0; k < 3; k++)
+                particle(
+                  [plane.p[0], 0.6, plane.p[2]],
+                  [
+                    (random() - 0.5) * 14,
+                    6 + random() * 9,
+                    (random() - 0.5) * 14,
+                  ],
+                  1.9,
+                  1.4,
+                  "spray",
+                );
+              for (let s of [-1, 1])
+                particle(
+                  [plane.p[0], 0.4, plane.p[2]],
+                  [
+                    s * Math.cos(plane.yaw) * 11,
+                    0,
+                    -s * Math.sin(plane.yaw) * 11,
+                  ],
+                  1.4,
+                  2.4,
+                  "wake",
+                );
+            }
+          }
+        }
+        updateCamera(dt);
+      }
+      // All combat objects live in the same world coordinates as the terrain and player.
+      const enemies = [],
+        rounds = [],
+        strips = [],
+        terrainEdits = new Map(),
+        explored = new Set();
+      const initialPlane = { ...plane, p: plane.p.slice() };
+      let health = 100,
+        kills = 0,
+        gunHeld = false,
+        gunClock = 0,
+        hitUntil = 0,
+        damageUntil = 0,
+        downTime = 0;
+      let nextEnemy = 0,
+        enemySerial = 0,
+        travel = 0,
+        nextStrip = 0,
+        landing = null,
+        stripSerial = 0;
+      const airborne = () => started && health > 0 && !landing;
+      const sector = () =>
+        Math.floor(plane.p[0] / 1250) + "," + Math.floor(plane.p[2] / 1250);
+      function uploadTerrain() {
+        bindTex(worldTexture, 0);
+        gl.texSubImage2D(
+          gl.TEXTURE_2D,
+          0,
+          0,
+          0,
+          SIZE,
+          SIZE,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          atlas,
+        );
+      }
+      function resetSortie(summary = "") {
+        started = false;
+        neutralizeInputs();
+        document.body.classList.remove("flying", "cockpitMode", "damaged");
+        for (const [index, old] of terrainEdits) {
+          fields[index * 2] = old[0];
+          atlas.set(old.slice(1), index * 4);
+        }
+        if (terrainEdits.size) uploadTerrain();
+        terrainEdits.clear();
+        explored.clear();
+        for (const list of [
+          enemies,
+          rounds,
+          strips,
+          missiles,
+          particles,
+          impacts,
+          ...trails,
+        ])
+          list.length = 0;
+        Object.assign(plane, initialPlane, {
+          p: initialPlane.p.slice(),
+          velocity: null,
+        });
+        rails.fill(0);
+        lastStore = -1;
+        updateStores();
+        mode = 0;
+        transition = null;
+        steered = false;
+        aim = [0, 0];
+        releaseLeft(false);
+        steeringFinger = null;
+        gunHeld = false;
+        gunClock = 0;
+        health = 100;
+        kills = 0;
+        downTime = 0;
+        landing = null;
+        hitUntil = 0;
+        damageUntil = 0;
+        rollTime = -1;
+        rollAngle = 0;
+        shotClock = 0;
+        trailClock = 0;
+        travel = 0;
+        nextStrip = 550;
+        nextEnemy = 1.4;
+        enemySerial = 0;
+        stripSerial = 0;
+        flightTime = 0;
+        $("view").lastElementChild.textContent = views[0];
+        $("notice").textContent = "";
+        noticeUntil = 0;
+        $("summary").textContent = summary;
+        lastUI = -1;
+        tick(0.001);
+        $("start").focus({ preventScroll: true });
+      }
+      function sortieUI() {
+        if (!started) return;
+        $("health").value = health;
+        $("combat").classList.toggle("critical", health <= 30);
+        $("hp").textContent = Math.ceil(health) + "%";
+        $("kills").textContent = String(kills).padStart(2, "0");
+        document.body.classList.toggle("damaged", sim < damageUntil);
+        const field = nearestField(),
+          b = $("landing");
+        b.disabled =
+          health <= 0 ||
+          (!landing && (!field || field.range > 2400)) ||
+          (!!landing &&
+            ["flare", "rollout", "departure"].includes(landing.phase));
+        b.textContent = landing
+          ? {
+              flare: "FLARING",
+              align: "CANCEL APPROACH",
+              final: "CANCEL APPROACH",
+              rollout: "TOUCHDOWN",
+              parked: "TAKE OFF",
+              departure: "TAKING OFF",
+            }[landing.phase]
+          : field
+            ? "LAND · " +
+              field.strip.name +
+              " · " +
+              (field.range / 1000).toFixed(1) +
+              " KM"
+            : "SEARCHING FOR AIRSTRIP";
+      }
+      function clearSight(a, b) {
+        for (let i = 1; i < 9; i++) {
+          let p = lerpV(a, b, i / 9);
+          if (p[1] < Math.max(0, ground(p[0], p[2])) + 1) return false;
+        }
+        return true;
+      }
+      function acquire(cone, range) {
+        let best = null,
+          score = Math.cos(cone);
+        for (const e of enemies) {
+          let delta = sub(e.p, plane.p),
+            d = Math.hypot(...delta),
+            s = dot(unit(delta), bodyAxes[2]);
+          if (d < range && s > score && clearSight(plane.p, e.p)) {
+            score = s;
+            best = e;
+          }
+        }
+        return best;
+      }
+      function spawnFighter() {
+        const first = enemySerial === 0,
+          angle = plane.yaw + (first ? -0.065 : (Math.random() - 0.5) * 1.5);
+        let range = first ? 225 : 390 + Math.random() * 145;
+        let x = plane.p[0] + Math.sin(angle) * range,
+          z = plane.p[2] + Math.cos(angle) * range;
+        let p = [
+          x,
+          Math.max(plane.p[1] + (first ? 8 : 32), ground(x, z) + 42),
+          z,
+        ];
+        let yaw = first
+          ? plane.yaw + 0.16
+          : Math.atan2(plane.p[0] - x, plane.p[2] - z);
+        enemies.push({
+          p,
+          old: p.slice(),
+          yaw,
+          pitch: 0,
+          bank: 0,
+          health: 60,
+          id: ++enemySerial,
+          age: 0,
+          speed: first ? 82 : 96,
+          v: mul(axes(yaw, 0, 0)[2], 90),
+          evade: first ? 3.6 : 0,
+          exitYaw: yaw,
+          shootIn: first ? 3.5 : 1.1,
+          burst: 0,
+        });
+      }
+      function burstAt(p) {
+        for (let i = 0; i < 28; i++) {
+          let v = [
+            (random() - 0.5) * 36,
+            random() * 24 - 5,
+            (random() - 0.5) * 36,
+          ];
+          particle(
+            p,
+            v,
+            2 + random() * 3,
+            i % 3 ? 0.42 + random() * 0.6 : 1.3 + random() * 1.1,
+            i % 3 ? "flame" : "smoke",
+          );
+        }
+        tone(132, 0.32, "sawtooth", 0.08, 36);
+      }
+      function damageEnemy(e, damage) {
+        e.health -= damage;
+        hitUntil = sim + 0.18;
+        if (e.health <= 0) {
+          enemies.splice(enemies.indexOf(e), 1);
+          burstAt(e.p);
+          kills++;
+          message("BANDIT DOWN", 1.1);
+          nextEnemy = Math.min(nextEnemy, sim + 5);
+        } else
+          for (let i = 0; i < 4; i++)
+            particle(
+              e.p,
+              [(random() - 0.5) * 14, random() * 12, (random() - 0.5) * 14],
+              1.2,
+              0.23,
+              "flame",
+            );
+      }
+      function hurtPlayer(damage) {
+        if (!airborne()) return;
+        health = Math.max(0, health - damage);
+        damageUntil = sim + 0.23;
+        tone(66, 0.11, "square", 0.035);
+        if (!health) {
+          burstAt(plane.p);
+          neutralizeInputs();
+          downTime = 1.55;
+          message("AIRCRAFT LOST", 2);
+        }
+        sortieUI();
+      }
+      function updateFighters(dt) {
+        if (!airborne()) return;
+        for (let i = enemies.length - 1; i >= 0; i--)
+          if (Math.hypot(...sub(enemies[i].p, plane.p)) > 1700)
+            enemies.splice(i, 1);
+        if (sim >= nextEnemy && enemies.length < 3) {
+          spawnFighter();
+          nextEnemy = sim + 8 + Math.random() * 5;
+        }
+        for (const e of enemies) {
+          e.old = e.p.slice();
+          e.age += dt;
+          e.evade -= dt;
+          e.shootIn -= dt;
+          let delta = sub(plane.p, e.p),
+            d = Math.hypot(...delta);
+          if (d < 72 && e.evade <= 0) {
+            e.evade = 2.9;
+            e.exitYaw = e.yaw + (e.id % 2 ? 0.83 : -0.83);
+          }
+          let desired =
+            e.evade > 0 ? e.exitYaw : Math.atan2(delta[0], delta[2]);
+          let turn = clamp(wrap(desired - e.yaw) * 1.65, -1.0, 1.0);
+          e.yaw += turn * dt;
+          e.bank = mix(e.bank, turn * 0.96, 1 - Math.exp(-dt * 3));
+          let sx = Math.sin(e.yaw),
+            cz = Math.cos(e.yaw),
+            ahead = ground(e.p[0] + sx * 75, e.p[2] + cz * 75);
+          let desiredY = Math.max(
+            plane.p[1] + Math.sin(e.age * 0.75 + e.id) * 11,
+            ground(e.p[0], e.p[2]) + 22,
+            ahead + 30,
+          );
+          e.pitch = mix(
+            e.pitch,
+            clamp(Math.atan2(desiredY - e.p[1], 110), -0.65, 0.85),
+            1 - Math.exp(-dt * 2),
+          );
+          let f = axes(e.yaw, e.pitch, e.bank)[2];
+          e.v = mul(f, e.speed);
+          e.p = add(e.p, mul(e.v, dt));
+          e.p[1] = Math.max(e.p[1], ground(e.p[0], e.p[2]) + 10, 12);
+          if (
+            e.shootIn <= 0 &&
+            d < 575 &&
+            dot(f, unit(delta)) > 0.8 &&
+            clearSight(e.p, plane.p)
+          ) {
+            const lead = add(
+              plane.p,
+              mul(plane.velocity || [0, 0, 0], (d / 510) * 0.93),
+            );
+            const spread = 3 + d * 0.013;
+            for (let i = 0; i < 3; i++)
+              lead[i] += (Math.random() - 0.5) * spread * 2;
+            rounds.push({
+              p: add(e.p, mul(f, 8)),
+              v: mul(unit(sub(lead, e.p)), 510),
+              hostile: true,
+              ttl: 1.2,
+            });
+            e.burst = (e.burst + 1) % 4;
+            e.shootIn = e.burst ? 0.15 : 2.6 + Math.random() * 1.5;
+          }
+        }
+      }
+      function segmentHit(a, b, old, now, r) {
+        const from = sub(a, old),
+          step = sub(sub(b, now), from),
+          len = dot(step, step);
+        const t = len ? clamp(-dot(from, step) / len, 0, 1) : 0,
+          nearest = add(from, mul(step, t));
+        return dot(nearest, nearest) <= r * r ? t : Infinity;
+      }
+      function fireGun() {
+        const p = local(0, -0.08, 10.5),
+          target = acquire(0.105, 620);
+        let dir = bodyAxes[2];
+        if (target) {
+          const lead = add(
+            target.p,
+            mul(target.v, Math.hypot(...sub(target.p, p)) / 760),
+          );
+          dir = unit(sub(lead, p));
+        }
+        rounds.push({ p, v: mul(dir, 760), ttl: 1.1, hostile: false });
+        tone(124, 0.065, "sawtooth", 0.038, 42);
+      }
+      function updateRounds(dt) {
+        gunClock = Math.max(0, gunClock - dt);
+        if (gunHeld && airborne() && !gunClock) {
+          fireGun();
+          gunClock = 0.078;
+        }
+        const oldPlayer = sub(plane.p, mul(plane.velocity || [0, 0, 0], dt));
+        for (let i = rounds.length - 1; i >= 0; i--) {
+          const r = rounds[i],
+            next = add(r.p, mul(r.v, dt));
+          r.ttl -= dt;
+          let t = Infinity,
+            target = null;
+          if (r.hostile && airborne())
+            t = segmentHit(r.p, next, oldPlayer, plane.p, 8);
+          if (!r.hostile)
+            for (const e of enemies) {
+              let test = segmentHit(r.p, next, e.old, e.p, 11);
+              if (test < t) {
+                t = test;
+                target = e;
+              }
+            }
+          let end = Number.isFinite(t) ? lerpV(r.p, next, t) : next;
+          if (end[1] <= Math.max(0, ground(end[0], end[2])) || r.ttl <= 0) {
+            rounds.splice(i, 1);
+            continue;
+          }
+          if (Number.isFinite(t)) {
+            if (target) damageEnemy(target, 12);
+            else hurtPlayer(6);
+            rounds.splice(i, 1);
+          } else r.p = next;
+        }
+      }
+      function missileHit(m, next, dt) {
+        let target = null,
+          t = Infinity;
+        for (const e of enemies) {
+          const k = segmentHit(m.p, next, e.old, e.p, 14);
+          if (k < t) {
+            t = k;
+            target = e;
+          }
+        }
+        if (target) {
+          let p = lerpV(m.p, next, t);
+          if (p[1] > Math.max(0, ground(p[0], p[2]))) {
+            damageEnemy(target, 80);
+            return true;
+          }
+        }
+        return false;
+      }
+      const stripHalf = 185,
+        stripWidth = 19;
+      function tileOffset(x) {
+        return mod(x + PERIOD / 2, PERIOD) - PERIOD / 2;
+      }
+      function fieldImage(s) {
+        return [
+          plane.p[0] + tileOffset(s.x - plane.p[0]),
+          s.y,
+          plane.p[2] + tileOffset(s.z - plane.p[2]),
+        ];
+      }
+      function nearestField() {
+        let best = null;
+        for (const strip of strips) {
+          let p = fieldImage(strip),
+            range = Math.hypot(p[0] - plane.p[0], p[2] - plane.p[2]);
+          if (!best || range < best.range) best = { strip, p, range };
+        }
+        return best;
+      }
+      function buildStrip() {
+        let best = null,
+          score = Infinity;
+        // Prefer a naturally level site on land, in the sector ahead of the aircraft.
+        for (let i = 0; i < 160; i++) {
+          let a = plane.yaw + (Math.random() - 0.5) * 2.05,
+            r = 640 + Math.random() * 780,
+            x = plane.p[0] + Math.sin(a) * r,
+            z = plane.p[2] + Math.cos(a) * r,
+            y = ground(x, z);
+          if (
+            y < 6 ||
+            strips.some(
+              (s) => Math.hypot(tileOffset(s.x - x), tileOffset(s.z - z)) < 540,
+            )
+          )
+            continue;
+          let yaw = plane.yaw + (Math.random() - 0.5) * 1.4,
+            f = [Math.sin(yaw), 0, Math.cos(yaw)],
+            right = [f[2], 0, -f[0]],
+            rough = 0;
+          for (let l of [-210, -120, 0, 120, 210])
+            for (let w of [-25, 25]) {
+              let h = ground(
+                x + f[0] * l + right[0] * w,
+                z + f[2] * l + right[2] * w,
+              );
+              rough += Math.abs(h - y) + (h < 0 ? 100 : 0);
+            }
+          let cost = rough + y * 0.12 + r * 0.014;
+          if (cost < score) {
+            score = cost;
+            best = { x: mod(x, PERIOD), z: mod(z, PERIOD), y, yaw, f, right };
+          }
+        }
+        if (!best) return false;
+        let s = best;
+        s.name = "STRIP " + String(++stripSerial).padStart(2, "0");
+        for (
+          let iz = Math.floor((s.z - 258) / CELL);
+          iz <= Math.ceil((s.z + 258) / CELL);
+          iz++
+        )
+          for (
+            let ix = Math.floor((s.x - 258) / CELL);
+            ix <= Math.ceil((s.x + 258) / CELL);
+            ix++
+          ) {
+            let dx = ix * CELL - s.x,
+              dz = iz * CELL - s.z,
+              along = Math.abs(dx * s.f[0] + dz * s.f[2]),
+              across = Math.abs(dx * s.right[0] + dz * s.right[2]);
+            let dist = Math.hypot(
+              Math.max(0, along - stripHalf - 15),
+              Math.max(0, across - stripWidth - 14),
+            );
+            if (dist >= 43) continue;
+            let i = mod(iz, SIZE) * SIZE + mod(ix, SIZE),
+              h = fields[i * 2],
+              blend = clamp(dist / 43, 0, 1);
+            if (!terrainEdits.has(i))
+              terrainEdits.set(i, [h, ...atlas.slice(i * 4, i * 4 + 4)]);
+            h = mix(s.y, h, blend * blend * (3 - 2 * blend));
+            fields[i * 2] = h;
+            let bits = clamp(Math.round((h + 160) * 40), 0, 65535);
+            atlas[i * 4] = bits >> 8;
+            atlas[i * 4 + 1] = bits & 255;
+            if (dist < 8) {
+              atlas[i * 4 + 2] = 0;
+              atlas[i * 4 + 3] = 248;
+            }
+          }
+        strips.push(s);
+        uploadTerrain();
+        message(
+          s.name + " OPEN · " + prettyKey(config.keys.land) + " TO LAND",
+          3,
+        );
+        return true;
+      }
+      function checkFlyInLanding() {
+        if (
+          !airborne() ||
+          !steered ||
+          boost ||
+          plane.rh > 18 ||
+          plane.pitch > 0.09 ||
+          Math.abs(plane.bank) > 0.38
+        )
+          return;
+        const field = nearestField();
+        if (!field || field.range > stripHalf + 12) return;
+        const s = field.strip,
+          offset = sub(plane.p, field.p),
+          forward = axes(plane.yaw, 0, 0)[2],
+          alignment = dot(s.f, forward);
+        if (Math.abs(alignment) < 0.965 || Math.abs(dot(offset, s.right)) > 14)
+          return;
+        let f = mul(s.f, Math.sign(alignment)),
+          along = dot(offset, f);
+        if (along < -stripHalf || along > -45) return;
+        landing = {
+          phase: "flare",
+          strip: s,
+          f,
+          flare: 0,
+          startY: plane.p[1],
+          run: 0,
+        };
+        neutralizeInputs();
+        rollTime = -1;
+        rollAngle = 0;
+        rounds.length = 0;
+        message("RUNWAY CONTACT · LANDING");
+        sortieUI();
+      }
+      function updateDiscovery(dt) {
+        if (!airborne()) return;
+        travel += plane.speed * dt;
+        if (travel < nextStrip || strips.length >= 12 || explored.has(sector()))
+          return;
+        if (buildStrip()) {
+          explored.add(sector());
+          nextStrip = travel + 1650 + Math.random() * 1150;
+        } else nextStrip = travel + 220;
+      }
+      function requestLanding() {
+        if (!started || !health) return;
+        if (landing) {
+          if (landing.phase === "parked") {
+            landing.phase = "departure";
+            landing.run = 0;
+            message("DEPARTURE CLEARED");
+          } else if (["align", "final"].includes(landing.phase)) {
+            landing = null;
+            plane.speed = Math.max(58, plane.speed);
+            aim = [0, 0];
+            message("APPROACH CANCELLED");
+            nextEnemy = sim + 5;
+          }
+          sortieUI();
+          return;
+        }
+        let site = nearestField();
+        if (!site || site.range > 2400) {
+          message(
+            site
+              ? "FLY WITHIN 2.4 KM OF THE STRIP"
+              : "EXPLORE TO FIND AN AIRSTRIP",
+          );
+          return;
+        }
+        let { strip, p: center } = site,
+          relative = sub(plane.p, center);
+        let sign = dot(relative, strip.f) > 0 ? -1 : 1,
+          f = mul(strip.f, sign),
+          gate = add(center, mul(f, -355)),
+          touch = add(center, mul(f, -94));
+        let start = plane.p.slice(),
+          offset = Math.hypot(start[0] - gate[0], start[2] - gate[2]),
+          out = Math.max(120, Math.min(440, offset * 0.38));
+        let a = add(start, mul(axes(plane.yaw, 0, 0)[2], out)),
+          b = sub(gate, mul(f, Math.max(145, out)));
+        const points = [start];
+        let gateIndex = 96;
+        for (let i = 1; i <= gateIndex; i++) {
+          let t = i / gateIndex,
+            q = 1 - t;
+          let p = start.map(
+            (v, k) =>
+              q * q * q * v +
+              3 * q * q * t * a[k] +
+              3 * q * t * t * b[k] +
+              t * t * t * gate[k],
+          );
+          p[1] = Math.max(
+            mix(start[1], center[1] + 70, t),
+            Math.max(0, ground(p[0], p[2])) +
+              mix(plane.rh, 33, Math.min(1, t * 6)) * (1 - t * 0.35),
+          );
+          points.push(p);
+        }
+        for (let i = 1; i <= 52; i++) {
+          let t = i / 52,
+            p = lerpV(gate, touch, t);
+          p[1] = Math.max(
+            mix(points[gateIndex][1], center[1] + 1.52, t),
+            ground(p[0], p[2]) + 1.52 + (1 - t) * 13,
+          );
+          points.push(p);
+        }
+        // Lift the approach before high terrain and keep the descent continuous.
+        for (let i = points.length - 2; i > 0; i--) {
+          let a = points[i],
+            b = points[i + 1];
+          a[1] = Math.max(
+            a[1],
+            b[1] - 0.46 * Math.hypot(a[0] - b[0], a[2] - b[2]),
+          );
+        }
+        const lengths = [0];
+        for (let i = 1; i < points.length; i++)
+          lengths.push(
+            lengths[i - 1] + Math.hypot(...sub(points[i], points[i - 1])),
+          );
+        landing = {
+          phase: "align",
+          strip,
+          f,
+          points,
+          lengths,
+          dist: 0,
+          index: 1,
+          gate: lengths[gateIndex],
+          total: lengths.at(-1),
+          run: 0,
+        };
+        neutralizeInputs();
+        rollTime = -1;
+        rollAngle = 0;
+        rounds.length = 0;
+        message("APPROACH ASSIST · " + strip.name);
+        sortieUI();
+      }
+      function updateLanding(dt) {
+        let l = landing,
+          p = plane.p.slice(),
+          old = plane.p,
+          yaw = plane.yaw;
+        if (l.phase === "flare") {
+          l.flare = Math.min(1, l.flare + dt / 1.55);
+          plane.speed = mix(plane.speed, 42, 1 - Math.exp(-dt * 1.9));
+          p = add(p, mul(l.f, plane.speed * dt));
+          p[1] = mix(l.startY, l.strip.y + 1.52, l.flare * (2 - l.flare));
+          if (l.flare >= 1) {
+            l.phase = "rollout";
+            l.brake =
+              plane.speed ** 2 /
+              (2 * Math.max(22, 42 - dot(sub(p, fieldImage(l.strip)), l.f)));
+            message("TOUCHDOWN · BRAKING");
+          }
+        } else if (l.phase === "align" || l.phase === "final") {
+          let speed = mix(106, 49, clamp(l.dist / l.total, 0, 1));
+          plane.speed = mix(plane.speed, speed, 1 - Math.exp(-dt * 1.7));
+          l.dist = Math.min(l.total, l.dist + plane.speed * dt);
+          while (l.index < l.lengths.length - 1 && l.dist > l.lengths[l.index])
+            l.index++;
+          let i = l.index,
+            f = clamp(
+              (l.dist - l.lengths[i - 1]) /
+                Math.max(0.001, l.lengths[i] - l.lengths[i - 1]),
+              0,
+              1,
+            );
+          p = lerpV(l.points[i - 1], l.points[i], f);
+          p[1] = Math.max(p[1], ground(p[0], p[2]) + 1.52);
+          if (l.dist >= l.gate) l.phase = "final";
+          if (l.dist >= l.total) {
+            l.phase = "rollout";
+            l.brake = plane.speed ** 2 / 260;
+            message("TOUCHDOWN · BRAKING");
+          }
+        } else if (l.phase === "rollout") {
+          plane.speed = Math.max(0, plane.speed - l.brake * dt);
+          p = add(p, mul(l.f, plane.speed * dt));
+          p[1] = l.strip.y + 1.52;
+          if (!plane.speed) {
+            l.phase = "parked";
+            health = 100;
+            rails.fill(0);
+            updateStores();
+            message(
+              "SERVICED · " + prettyKey(config.keys.land) + " TO TAKE OFF",
+              4,
+            );
+            sortieUI();
+          }
+        } else if (l.phase === "departure") {
+          plane.speed = Math.min(108, plane.speed + 23 * dt);
+          l.run += plane.speed * dt;
+          p = add(p, mul(l.f, plane.speed * dt));
+          p[1] = Math.max(
+            l.strip.y + 1.52 + Math.max(0, l.run - 68) * 0.2,
+            ground(p[0], p[2]) + 1.52,
+          );
+          if (l.run > 164) {
+            landing = null;
+            aim = [0, 0];
+            steered = false;
+            nextEnemy = sim + 6;
+            message("AIRBORNE");
+            sortieUI();
+          }
+        } else plane.speed = 0;
+        let delta = sub(p, old),
+          horizontal = Math.hypot(delta[0], delta[2]);
+        if (horizontal > 0.0001) yaw = Math.atan2(delta[0], delta[2]);
+        plane.turn = clamp(wrap(yaw - plane.yaw) / dt, -1, 1);
+        plane.yaw = yaw;
+        plane.bank = mix(plane.bank, plane.turn * 0.4, 1 - Math.exp(-dt * 4));
+        plane.pitch = mix(
+          plane.pitch,
+          Math.atan2(delta[1], Math.max(0.001, horizontal)),
+          1 - Math.exp(-dt * 5),
+        );
+        plane.vs = delta[1] / dt;
+        plane.p = p;
+        plane.ground = Math.max(0, ground(p[0], p[2]));
+        plane.rh = p[1] - plane.ground;
+        plane.throttle = mix(plane.throttle, 0, dt * 3);
+      }
+      function drawRunways(triangle, puff, cam) {
+        for (let s of strips) {
+          let center = fieldImage(s);
+          if (Math.hypot(...sub(center, cam.eye)) > 4200) continue;
+          function at(x, z, y) {
+            return add(
+              add(center, mul(s.right, x)),
+              add(mul(s.f, z), [0, y, 0]),
+            );
+          }
+          for (let z = -180; z <= 180; z += 36)
+            for (let x of [-21, 21])
+              puff(at(x, z, 1.05), 0.78, [1, 0.81, 0.41, 1], 0);
+        }
+      }
+      function drawSortieHUD(cam) {
+        if (!started || health <= 0) return;
+        const c = $("panel"),
+          g = c.getContext("2d"),
+          p = plotter(g),
+          w = c.width,
+          h = c.height;
+        function project(v) {
+          let r = sub(v, cam.eye),
+            z = dot(r, cam.f);
+          if (z < 2) return null;
+          return [
+            w / 2 + ((dot(r, cam.r) / z) * h * lens) / 2,
+            h / 2 - ((dot(r, cam.u) / z) * h * lens) / 2,
+          ];
+        }
+        const target = rearInputs.size ? null : acquire(0.22, 1000);
+        for (const e of enemies) {
+          let a = project(e.p);
+          if (
+            !a ||
+            a[0] < 9 ||
+            a[0] > w - 9 ||
+            a[1] < 14 ||
+            a[1] > h * (mode === 1 && !rearInputs.size ? 0.64 : 0.96) ||
+            !clearSight(cam.eye, e.p)
+          )
+            continue;
+          let [x, y] = a,
+            r = clamp(
+              1950 / Math.max(10, Math.hypot(...sub(e.p, cam.eye))),
+              5,
+              18,
+            ),
+            col = target === e ? "#ffd188" : "#e98a76";
+          for (let s of [-1, 1])
+            for (let t of [-1, 1]) {
+              p.line(x + s * r, y + t * r, x + s * (r - 3), y + t * r, col);
+              p.line(x + s * r, y + t * r, x + s * r, y + t * (r - 3), col);
+            }
+          p.rect(x - r, y - r - 4, 2 * r, 2, "#422c34");
+          p.rect(x - r, y - r - 4, (2 * r * e.health) / 60, 1, col);
+        }
+        if (airborne() && mode !== 2 && !rearInputs.size) {
+          let a = project(local(0, 0, 270));
+          if (a) {
+            let [x, y] = a,
+              col = sim < hitUntil ? "#ffad67" : "#f7e9c9";
+            for (let s of [-1, 1]) {
+              p.line(x + s * 4, y, x + s * 7, y, col);
+              p.line(x, y + s * 4, x, y + s * 6, col);
+            }
+            p.rect(x, y, 1, 1, col);
+          }
+        }
+        let field = nearestField();
+        if (field && field.range < 3500 && !landing) {
+          let a = project(add(field.p, [0, 13, 0]));
+          if (
+            a &&
+            a[0] > 18 &&
+            a[0] < w - 18 &&
+            a[1] > 15 &&
+            a[1] < h * (mode === 1 && !rearInputs.size ? 0.62 : 0.94)
+          ) {
+            let [x, y] = a,
+              col = "#c6e6bb";
+            for (let s of [-1, 1]) {
+              p.line(x - 4, y, x, y + s * 4, col);
+              p.line(x, y + s * 4, x + 4, y, col);
+            }
+            p.text("RWY", x - 6, y + 7, col);
+          }
+        }
+      }
+      const fxVS =
+        `#version 300 es
+` +
+        vertexCommon +
+        `
+layout(location=0)in vec3 pos;layout(location=1)in vec4 col;out vec4 color;void main(){color=col;gl_Position=project(pos);}`;
+      const fxFS =
+        `#version 300 es
+` +
+        common +
+        `
+in vec4 color;out vec4 frag;void main(){if(color.a<bayer())discard;frag=vec4(color.rgb,1.);}`;
+      let gl,
+        programs = {},
+        sceneryVA,
+        sceneryCount,
+        jetVA,
+        jetCount,
+        fxVA,
+        fxBuffer,
+        emptyVA,
+        layer,
+        framebuffer,
+        depthbuffer,
+        worldTexture,
+        shadowTexture,
+        internalH = 340,
+        lens = 2.04,
+        frameAvg = 16,
+        lastResize = "",
+        W,
+        H,
+        frames = 0;
+      function program(v, f) {
+        let p = gl.createProgram();
+        for (let [type, text] of [
+          [gl.VERTEX_SHADER, v],
+          [gl.FRAGMENT_SHADER, f],
+        ]) {
+          let s = gl.createShader(type);
+          gl.shaderSource(s, text);
+          gl.compileShader(s);
+          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+            throw Error(gl.getShaderInfoLog(s));
+          gl.attachShader(p, s);
+          gl.deleteShader(s);
+        }
+        gl.linkProgram(p);
+        if (!gl.getProgramParameter(p, gl.LINK_STATUS))
+          throw Error(gl.getProgramInfoLog(p));
+        let u = {};
+        for (
+          let i = 0;
+          i < gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+          i++
+        ) {
+          let n = gl.getActiveUniform(p, i).name;
+          u[n.replace("[0]", "")] = gl.getUniformLocation(p, n);
+        }
+        return { p, u };
+      }
+      function texture(w, h, format, internal, data, filter, repeat) {
+        let t = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, t);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          internal,
+          w,
+          h,
+          0,
+          format,
+          gl.UNSIGNED_BYTE,
+          data,
+        );
+        for (let opt of [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER])
+          gl.texParameteri(gl.TEXTURE_2D, opt, filter);
+        for (let opt of [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T])
+          gl.texParameteri(
+            gl.TEXTURE_2D,
+            opt,
+            repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE,
+          );
+        return t;
+      }
+      function vao(data, layout, instance = false, dynamic = false) {
+        let va = gl.createVertexArray(),
+          buf = gl.createBuffer();
+        gl.bindVertexArray(va);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          data,
+          dynamic ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW,
+        );
+        let stride = layout.reduce((a, b) => a + b),
+          offset = 0;
+        layout.forEach((sz, i) => {
+          gl.enableVertexAttribArray(i);
+          gl.vertexAttribPointer(
+            i,
+            sz,
+            gl.FLOAT,
+            false,
+            stride * 4,
+            offset * 4,
+          );
+          if (instance) gl.vertexAttribDivisor(i, 1);
+          offset += sz;
+        });
+        return [va, buf];
+      }
+      function initGL() {
+        gl = $("world").getContext("webgl2", {
+          antialias: false,
+          alpha: false,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: false,
+        });
+        if (!gl) throw Error("WebGL2 is unavailable in this browser");
+        for (let [name, v, f] of [
+          ["land", quadVS, terrainFS],
+          ["scene", spriteVS, spriteFS],
+          ["jet", jetVS, jetFS],
+          ["edge", quadVS, edgeFS],
+          ["fx", fxVS, fxFS],
+        ])
+          programs[name] = program(v, f);
+        let scene = makeScenery(),
+          mesh = buildJet();
+        worldTexture = texture(
+          SIZE,
+          SIZE,
+          gl.RGBA,
+          gl.RGBA8,
+          atlas,
+          gl.LINEAR,
+          true,
+        );
+        shadowTexture = texture(
+          256,
+          256,
+          gl.RED,
+          gl.R8,
+          scene.mask,
+          gl.LINEAR,
+          true,
+        );
+        sceneryCount = scene.data.length / 7;
+        sceneryVA = vao(scene.data, [3, 4], true)[0];
+        jetCount = mesh.length / 10;
+        jetVA = vao(mesh, [3, 3, 3, 1])[0];
+        [fxVA, fxBuffer] = vao(4, [3, 4], false, true);
+        emptyVA = gl.createVertexArray();
+        framebuffer = gl.createFramebuffer();
+        depthbuffer = gl.createRenderbuffer();
+        gl.disable(gl.DITHER);
+        resize();
+      }
+      function resize() {
+        let w = $("stage").clientWidth,
+          h = $("stage").clientHeight,
+          key = [w, h, internalH].join("/");
+        if (key === lastResize) return;
+        lastResize = key;
+        H = Math.min(internalH, h);
+        W = Math.max(2, Math.round((H * w) / h));
+        $("world").width = W;
+        $("world").height = H;
+        let ph = 340;
+        $("panel").width = Math.round((w / h) * ph);
+        $("panel").height = ph;
+        if (layer) gl.deleteTexture(layer);
+        layer = texture(W, H, gl.RGBA, gl.RGBA8, null, gl.NEAREST, false);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(
+          gl.FRAMEBUFFER,
+          gl.COLOR_ATTACHMENT0,
+          gl.TEXTURE_2D,
+          layer,
+          0,
+        );
+        gl.bindRenderbuffer(gl.RENDERBUFFER, depthbuffer);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, W, H);
+        gl.framebufferRenderbuffer(
+          gl.FRAMEBUFFER,
+          gl.DEPTH_ATTACHMENT,
+          gl.RENDERBUFFER,
+          depthbuffer,
+        );
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, W, H);
+      }
+      function use(name, pass) {
+        const cam = pass.camera;
+        let { p, u } = programs[name];
+        gl.useProgram(p);
+        for (let [k, v] of [
+          ["eye", cam.eye],
+          ["cr", cam.r],
+          ["cu", cam.u],
+          ["cf", cam.f],
+          ["jet", plane.p],
+        ])
+          if (u[k]) gl.uniform3fv(u[k], v);
+        if (u.res) gl.uniform2f(u.res, pass.width, pass.height);
+        if (u.lens) gl.uniform1f(u.lens, pass.lens);
+        if (u.tim) gl.uniform1f(u.tim, sim);
+        if (u.gearDown)
+          gl.uniform1f(
+            u.gearDown,
+            landing && landing.phase !== "align" ? 1 : 0,
+          );
+        if (u.enemyPaint) gl.uniform1f(u.enemyPaint, 0);
+        if (u.body) gl.uniformMatrix3fv(u.body, false, bodyAxes.flat());
+        return u;
+      }
+      function bindTex(tex, index) {
+        gl.activeTexture(gl.TEXTURE0 + index);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+      }
+      function effects(pass) {
+        const cam = pass.camera;
+        let data = [];
+        function vertex(p, col) {
+          data.push(...p, ...col);
+        }
+        function triangle(a, b, c, col) {
+          vertex(a, col);
+          vertex(b, col);
+          vertex(c, col);
+        }
+        function ribbon(a, b, w1, w2, c) {
+          let v = unit(cross(sub(b, a), sub(cam.eye, a))),
+            e = mul(v, w1),
+            f = mul(v, w2);
+          let a1 = add(a, e),
+            a2 = sub(a, e),
+            b1 = add(b, f),
+            b2 = sub(b, f);
+          triangle(a1, a2, b1, c);
+          triangle(b1, a2, b2, c);
+        }
+        function puff(p, r, col, seed, stretch = 1) {
+          let last;
+          for (let i = 0; i <= 7; i++) {
+            let a = (i / 7) * TAU + seed,
+              rr = r * (0.91 + 0.1 * Math.sin(i * 21 + seed));
+            let k = add(
+              p,
+              add(
+                mul(cam.r, Math.cos(a) * rr),
+                mul(cam.u, Math.sin(a) * rr * stretch),
+              ),
+            );
+            if (i > 0) triangle(p, last, k, col);
+            last = k;
+          }
+        }
+        if (started) {
+          drawRunways(triangle, puff, cam);
+          for (const r of rounds) {
+            let tail = sub(r.p, mul(unit(r.v), r.hostile ? 14 : 20));
+            ribbon(
+              tail,
+              r.p,
+              r.hostile ? 0.48 : 0.3,
+              r.hostile ? 0.7 : 0.6,
+              r.hostile ? [1, 0.32, 0.16, 1] : [1, 0.92, 0.55, 1],
+            );
+          }
+        }
+        let external = health > 0 && pass.showJet;
+        if (external) {
+          for (let s of [-1, 1]) {
+            let flick = Math.sin(sim * 41 + s) * 0.12,
+              base = local(s * 1.46, -0.26, -7.87),
+              len = 1.3 + plane.throttle * 6.3 + flick;
+            ribbon(
+              base,
+              local(s * 1.46, -0.26, -7.87 - len),
+              0.43 + plane.throttle * 0.14,
+              0,
+              [1, 0.52, 0.27, 1],
+            );
+            ribbon(
+              add(base, mul(cam.f, -0.025)),
+              local(s * 1.46, -0.26, -7.87 - len * 0.7),
+              0.28,
+              0,
+              [1, 0.94, 0.75, 1],
+            );
+            let tip = local(s * 7.6, -0.17, -4.3),
+              tr = trails[(s + 1) / 2];
+            if (!started) {
+              for (let j = 0; j < 9; j++) {
+                let next = local(
+                  s * (7.6 + j * 0.025),
+                  -0.17 + Math.sin(j * 0.4 + sim * 0.5) * j * 0.035,
+                  -4.3 - (j + 1) * 2.3,
+                );
+                ribbon(tip, next, 0.065 + j * 0.014, 0.09 + j * 0.015, [
+                  1,
+                  0.93,
+                  0.82,
+                  0.84 - j * 0.077,
+                ]);
+                tip = next;
+              }
+            } else
+              for (let j = tr.length - 1; j >= 0; j--) {
+                let age = sim - tr[j].t;
+                if (age > 1) break;
+                ribbon(tip, tr[j].p, 0.07 + age * 0.23, 0.12 + age * 0.21, [
+                  0.95,
+                  0.92,
+                  0.87,
+                  0.93 - age,
+                ]);
+                tip = tr[j].p;
+              }
+          }
+        }
+        for (let m of missiles) {
+          ribbon(
+            m.p,
+            sub(m.p, mul(m.dir, 4)),
+            0.27,
+            0.26,
+            [0.91, 0.86, 0.77, 1],
+          );
+          ribbon(
+            sub(m.p, mul(m.dir, 4)),
+            sub(m.p, mul(m.dir, 11)),
+            0.55,
+            0,
+            [1, 0.69, 0.36, 1],
+          );
+        }
+        for (let p of particles) {
+          let age = 1 - p.ttl / p.life,
+            size = p.size * (0.6 + age * 1.7),
+            col;
+          switch (p.kind) {
+            case "flame":
+              col =
+                age < 0.2
+                  ? [1, 0.92, 0.63, 1]
+                  : age < 0.53
+                    ? [1, 0.54, 0.21, 1]
+                    : [0.73, 0.26, 0.16, 1 - age * 0.6];
+              break;
+            case "smoke":
+              col = [
+                0.34 + age * 0.11,
+                0.3 + age * 0.1,
+                0.34 + age * 0.11,
+                0.89 - age * 0.68,
+              ];
+              break;
+            case "spray":
+            case "mist":
+              col = [0.86, 0.92, 0.89, 1 - age * 0.86];
+              break;
+            case "wake":
+              col = [0.78, 0.89, 0.83, 1 - age];
+              size *= 2;
+              break;
+            default:
+              col = [0.87, 0.83, 0.79, 0.76 - age * 0.71];
+          }
+          puff(
+            p.p,
+            size,
+            col,
+            p.seed * 9,
+            p.kind === "spray" ? 1.55 : p.kind === "wake" ? 0.26 : 1,
+          );
+        }
+        for (let hit of impacts) {
+          let t = hit.age;
+          if (t < 0.16)
+            puff(
+              add(hit.p, [0, 4, 0]),
+              18 * (1 - t * 2.4),
+              [1, 0.96, 0.79, 1],
+              0.4,
+            );
+          if (!hit.water && t < 1.16) {
+            let growth = Math.sin(Math.min(1, t / 0.32) * 1.57),
+              fade = 1 - t / 1.16,
+              center = add(hit.p, add([0, 5 + t * 14, 0], mul(cam.f, -9)));
+            for (let j = 0; j < 7; j++) {
+              let a = j * 2.4,
+                r = 4.5 + growth * 5,
+                off = add(
+                  mul(cam.r, Math.cos(a) * r),
+                  mul(cam.u, Math.sin(a) * r * 0.61),
+                );
+              let pos = add(center, off);
+              puff(
+                pos,
+                (4 + growth * 5) * Math.sqrt(fade),
+                j % 3 ? [0.96, 0.36, 0.12, 1] : [0.77, 0.24, 0.12, 1],
+                j,
+              );
+              puff(
+                add(pos, mul(cam.f, -0.3)),
+                (2.5 + growth * 3) * fade,
+                [1, 0.69, 0.24, 1],
+                j + 0.7,
+              );
+            }
+            puff(
+              add(center, mul(cam.f, -1)),
+              (5 + growth * 6) * fade,
+              [1, 0.85, 0.44, 1],
+              0.3,
+            );
+          } else if (hit.water && t < 1.8) {
+            for (let j = 0; j < 7; j++) {
+              let yy = j / 7,
+                alpha = Math.min(1, (1.8 - t) * 1.8),
+                pos = add(
+                  hit.p,
+                  add(
+                    [0, (5 + j * 7) * Math.min(1, t * 2.7) - t * t * 6, 0],
+                    mul(cam.r, Math.sin(j * 2.5) * 1.9),
+                  ),
+                );
+              let rr = (9 - yy * 5) * Math.min(1, t * 5 + 0.2);
+              puff(pos, rr, [0.62, 0.8, 0.81, alpha], j, 1.15);
+              puff(
+                add(pos, add(mul(cam.f, -1), mul(cam.r, rr * 0.27))),
+                rr * 0.73,
+                [0.92, 0.95, 0.86, alpha],
+                j + 3,
+                1.1,
+              );
+            }
+          }
+        }
+        if (!data.length) return;
+        use("fx", pass);
+        gl.bindVertexArray(fxVA);
+        gl.bindBuffer(gl.ARRAY_BUFFER, fxBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.DYNAMIC_DRAW);
+        gl.drawArrays(gl.TRIANGLES, 0, data.length / 7);
+      }
+      function renderWorld(pass) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, pass.target);
+        gl.viewport(0, 0, pass.width, pass.height);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.ALWAYS);
+        gl.depthMask(true);
+        gl.bindVertexArray(emptyVA);
+        let u = use("land", pass);
+        bindTex(worldTexture, 0);
+        gl.uniform1i(u.mapTex, 0);
+        bindTex(shadowTexture, 1);
+        gl.uniform1i(u.cloudMap, 1);
+        let marks = new Float32Array(48);
+        impacts.forEach((h, i) => marks.set([h.p[0], h.p[2], h.age, 1], i * 4));
+        gl.uniform4fv(u.marks, marks);
+        gl.uniform1i(u.markCount, impacts.length);
+        gl.uniform1i(u.stripCount, strips.length);
+        if (strips.length)
+          gl.uniform4fv(
+            u.stripMap,
+            new Float32Array(strips.flatMap((s) => [s.x, s.z, s.f[0], s.f[2]])),
+          );
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.depthFunc(gl.LEQUAL);
+        u = use("scene", pass);
+        bindTex(worldTexture, 0);
+        gl.uniform1i(u.groundMap, 0);
+        gl.bindVertexArray(sceneryVA);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, sceneryCount);
+        if (enemies.length) {
+          u = use("jet", pass);
+          gl.uniform1f(u.enemyPaint, 1);
+          gl.uniform1f(u.gearDown, 0);
+          gl.uniform4fv(u.loaded, [0, 0, 0, 0]);
+          gl.bindVertexArray(jetVA);
+          for (const e of enemies) {
+            gl.uniform3fv(u.jet, e.p);
+            gl.uniformMatrix3fv(
+              u.body,
+              false,
+              axes(e.yaw, e.pitch, e.bank).flat(),
+            );
+            gl.drawArrays(gl.TRIANGLES, 0, jetCount);
+          }
+        }
+        effects(pass);
+        if (health > 0 && pass.showJet) {
+          if (!pass.target) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+          }
+          u = use("jet", pass);
+          gl.uniform4fv(
+            u.loaded,
+            rails.map((v) => (v <= 0 ? 1 : 0)),
+          );
+          gl.bindVertexArray(jetVA);
+          gl.drawArrays(gl.TRIANGLES, 0, jetCount);
+          if (pass.target) return;
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+          gl.disable(gl.DEPTH_TEST);
+          u = use("edge", pass);
+          bindTex(layer, 2);
+          gl.uniform1i(u.layer, 2);
+          gl.bindVertexArray(emptyVA);
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+        }
+      }
+
+      // Each canopy mirror keeps its own small color and depth buffers. Only the
+      // reflections run at a lower refresh rate; flight and the main view run every frame.
+      const mirrorWidth = 120,
+        mirrorHeight = 44,
+        mirrorTargets = [];
+      let mirrorRefresh = -Infinity;
+      function makeMirrorTarget() {
+        const target = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, target);
+        for (const [attachment, format] of [
+          [gl.COLOR_ATTACHMENT0, gl.RGBA8],
+          [gl.DEPTH_ATTACHMENT, gl.DEPTH_COMPONENT16],
+        ]) {
+          const buffer = gl.createRenderbuffer();
+          gl.bindRenderbuffer(gl.RENDERBUFFER, buffer);
+          gl.renderbufferStorage(
+            gl.RENDERBUFFER,
+            format,
+            mirrorWidth,
+            mirrorHeight,
+          );
+          gl.framebufferRenderbuffer(
+            gl.FRAMEBUFFER,
+            attachment,
+            gl.RENDERBUFFER,
+            buffer,
+          );
+        }
+        if (
+          gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE
+        )
+          throw Error("Could not initialize cockpit mirrors");
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        return target;
+      }
+      function mirrorLayout() {
+        const panel = $("panel"),
+          w = panel.width;
+        const width = Math.round(Math.min(106, w * 0.205)),
+          height = Math.round((width * mirrorHeight) / mirrorWidth);
+        const margin = Math.max(7, Math.round(w * 0.032)),
+          y = 45;
+        return [-1, 1].map((side) => ({
+          x: side < 0 ? margin : w - margin - width,
+          y,
+          width,
+          height,
+          side,
+        }));
+      }
+      function renderMirrors(boxes) {
+        if (!mirrorTargets.length)
+          mirrorTargets.push(makeMirrorTarget(), makeMirrorTarget());
+        const refresh = sim - mirrorRefresh >= 1 / 24,
+          panel = $("panel");
+        for (const [i, box] of boxes.entries()) {
+          const target = mirrorTargets[i];
+          if (refresh)
+            renderWorld({
+              camera: rearCamera(box.side),
+              width: mirrorWidth,
+              height: mirrorHeight,
+              lens: 3.05,
+              target,
+              showJet: true,
+            });
+          // Flip horizontally just once, when copying the aft view into the glass.
+          const x0 = Math.round((box.x * W) / panel.width),
+            x1 = Math.round(((box.x + box.width) * W) / panel.width);
+          const y0 = H - Math.round(((box.y + box.height) * H) / panel.height),
+            y1 = H - Math.round((box.y * H) / panel.height);
+          gl.bindFramebuffer(gl.READ_FRAMEBUFFER, target);
+          gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+          gl.blitFramebuffer(
+            0,
+            0,
+            mirrorWidth,
+            mirrorHeight,
+            x1,
+            y0,
+            x0,
+            y1,
+            gl.COLOR_BUFFER_BIT,
+            gl.NEAREST,
+          );
+        }
+        if (refresh) mirrorRefresh = sim;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, W, H);
+      }
+      function render() {
+        resize();
+        const rear = started && rearInputs.size > 0,
+          camera = rear ? rearCamera() : cam;
+        renderWorld({
+          camera,
+          width: W,
+          height: H,
+          lens,
+          target: null,
+          showJet:
+            rear ||
+            mode !== 1 ||
+            !started ||
+            (transition && transition.t < 0.86),
+        });
+        const boxes =
+          started && mode === 1 && !rear && (!transition || transition.t > 0.92)
+            ? mirrorLayout()
+            : null;
+        if (boxes) renderMirrors(boxes);
+        else mirrorRefresh = -Infinity;
+        drawPanel();
+        drawSortieHUD(camera);
+        if (boxes) drawMirrorFrames(boxes);
+        frames++;
+      }
+      const font = {
+        0: "75557",
+        1: "26227",
+        2: "71747",
+        3: "71717",
+        4: "55711",
+        5: "74717",
+        6: "74757",
+        7: "71111",
+        8: "75757",
+        9: "75717",
+        A: "25755",
+        B: "65656",
+        C: "74447",
+        D: "65556",
+        E: "74647",
+        F: "74644",
+        G: "74557",
+        H: "55755",
+        I: "72227",
+        J: "11157",
+        K: "55655",
+        L: "44447",
+        M: "57755",
+        N: "57775",
+        O: "75557",
+        P: "75744",
+        Q: "75573",
+        R: "75655",
+        S: "74717",
+        T: "72222",
+        U: "55557",
+        V: "55552",
+        W: "55775",
+        X: "55255",
+        Y: "55222",
+        Z: "71247",
+        "-": "00700",
+        ".": "00002",
+        "/": "11244",
+        "+": "02720",
+        ":": "02020",
+        " ": "00000",
+      };
+      function plotter(g) {
+        function rect(x, y, w, h, c) {
+          g.fillStyle = c;
+          g.fillRect(
+            Math.round(x),
+            Math.round(y),
+            Math.round(w),
+            Math.round(h),
+          );
+        }
+        function line(x, y, X, Y, c) {
+          x = Math.round(x);
+          y = Math.round(y);
+          X = Math.round(X);
+          Y = Math.round(Y);
+          let dx = Math.abs(X - x),
+            sx = x < X ? 1 : -1,
+            dy = -Math.abs(Y - y),
+            sy = y < Y ? 1 : -1,
+            err = dx + dy;
+          g.fillStyle = c;
+          for (let i = 0; i < 3000; i++) {
+            g.fillRect(x, y, 1, 1);
+            if (x === X && y === Y) break;
+            let e = 2 * err;
+            if (e >= dy) {
+              err += dy;
+              x += sx;
+            }
+            if (e <= dx) {
+              err += dx;
+              y += sy;
+            }
+          }
+        }
+        function circle(x, y, r, c) {
+          g.fillStyle = c;
+          for (let i = -r; i <= r; i++) {
+            let w = Math.floor(Math.sqrt(r * r - i * i));
+            g.fillRect(Math.round(x) - w, Math.round(y) + i, w * 2 + 1, 1);
+          }
+        }
+        function text(str, x, y, c, scale = 1) {
+          str = String(str).toUpperCase();
+          for (let k = 0; k < str.length; k++) {
+            let s = font[str[k]] || font[" "];
+            for (let j = 0; j < 5; j++)
+              for (let i = 0; i < 3; i++)
+                if (Number(s[j]) & (4 >> i))
+                  rect(x + (4 * k + i) * scale, y + j * scale, scale, scale, c);
+          }
+        }
+        function poly(pts, c) {
+          for (
+            let y = Math.ceil(Math.min(...pts.map((p) => p[1])));
+            y <= Math.max(...pts.map((p) => p[1]));
+            y++
+          ) {
+            let xs = [];
+            for (let i = 0; i < pts.length; i++) {
+              let a = pts[i],
+                b = pts[(i + 1) % pts.length];
+              if ((a[1] <= y && b[1] > y) || (b[1] <= y && a[1] > y))
+                xs.push(a[0] + ((b[0] - a[0]) * (y - a[1])) / (b[1] - a[1]));
+            }
+            xs.sort((a, b) => a - b);
+            for (let i = 0; i + 1 < xs.length; i += 2)
+              rect(
+                Math.ceil(xs[i]),
+                y,
+                Math.floor(xs[i + 1]) - Math.ceil(xs[i]) + 1,
+                1,
+                c,
+              );
+          }
+        }
+        return { rect, line, circle, text, poly };
+      }
+      const dash = document.createElement("canvas");
+      dash.width = 540;
+      dash.height = 121;
+      const dg = dash.getContext("2d"),
+        d = plotter(dg);
+      let lastDash = -1;
+      function instruments() {
+        let { rect, line, circle, text, poly } = d;
+        dg.clearRect(0, 0, 540, 121);
+        const ink = "#151d26",
+          slate = "#454952",
+          rim = "#687075",
+          light = "#e7d9b9",
+          orange = "#e7a468",
+          muted = "#a09d8d";
+        const shape = [
+          [0, 34],
+          [51, 23],
+          [114, 15],
+          [166, 3],
+          [370, 3],
+          [422, 15],
+          [492, 24],
+          [540, 37],
+          [540, 121],
+          [0, 121],
+        ];
+        poly(shape, "#1c2028");
+        poly(
+          shape.map(([x, y]) => [x, y + 4]),
+          "#76747a",
+        );
+        poly(
+          shape.map(([x, y]) => [x, y + 7]),
+          "#444952",
+        );
+        poly(
+          [
+            [6, 45],
+            [55, 31],
+            [117, 23],
+            [165, 12],
+            [370, 12],
+            [430, 25],
+            [529, 42],
+            [529, 118],
+            [6, 118],
+          ],
+          "#303640",
+        );
+        for (let [x, y] of [
+          [8, 53],
+          [51, 36],
+          [114, 26],
+          [166, 13],
+          [371, 13],
+          [423, 29],
+          [528, 51],
+          [12, 114],
+          [527, 114],
+          [238, 108],
+          [336, 107],
+          [90, 106],
+        ]) {
+          circle(x, y, 2, "#171d26");
+          line(x - 1, y - 1, x + 1, y + 1, "#77767a");
+        }
+        function bezel(x, y, r, title) {
+          circle(x + 1, y + 2, r + 2, ink);
+          circle(x, y, r + 1, rim);
+          circle(x, y, r, "#252b32");
+          circle(x, y, r - 2, "#1c252a");
+          for (let i = 0; i < 10; i++) {
+            let a = -2.65 + i * 0.19;
+            let px = x + Math.sin(a) * r,
+              py = y - Math.cos(a) * r;
+            rect(px, py, 1, 1, "#929495");
+          }
+          text(title, x - title.length * 2, y + r + 5, muted);
+        }
+        function gauge(x, y, r, title, t, unitLabel, read) {
+          bezel(x, y, r, title);
+          for (let i = 0; i <= 12; i++) {
+            let a = -2.36 + (i * 4.72) / 12,
+              si = Math.sin(a),
+              co = -Math.cos(a);
+            line(
+              x + si * (r - 4),
+              y + co * (r - 4),
+              x + si * (r - (i % 3 ? 5 : 7)),
+              y + co * (r - (i % 3 ? 5 : 7)),
+              i >= 11 ? orange : light,
+            );
+          }
+          if (r >= 20) {
+            for (let [i, v] of [
+              [0, "0"],
+              [
+                3,
+                title === "ALTITUDE" ? "25" : title === "HEADING" ? "09" : "1",
+              ],
+              [
+                6,
+                title === "ALTITUDE" ? "50" : title === "HEADING" ? "18" : "2",
+              ],
+              [
+                9,
+                title === "ALTITUDE" ? "75" : title === "HEADING" ? "27" : "3",
+              ],
+            ]) {
+              let a = -2.36 + (i * 4.72) / 12;
+              text(
+                v,
+                x + Math.sin(a) * (r - 10) - v.length * 2,
+                y - Math.cos(a) * (r - 10) - 2,
+                "#969e97",
+              );
+            }
+          }
+          text(unitLabel, x - unitLabel.length * 2, y - 4, muted);
+          let a = -2.36 + 4.72 * t;
+          line(
+            x,
+            y,
+            x + Math.sin(a) * (r - 5),
+            y - Math.cos(a) * (r - 5),
+            orange,
+          );
+          circle(x, y, 2, light);
+          if (read) {
+            rect(x - 10, y + 6, 20, 7, ink);
+            text(read, x - read.length * 2, y + 7, light);
+          }
+        }
+        let knots = Math.round(plane.speed * 1.94384),
+          alt = Math.round(plane.p[1] * 3.28084),
+          heading = mod(Math.round((plane.yaw * 180) / Math.PI), 360),
+          bank = plane.bank + rollAngle;
+        gauge(57, 70, 22, "AIRSPEED", knots / 400, "KTS", String(knots));
+        bezel(113, 66, 26, "ATTITUDE");
+        let tilt = bank;
+        for (let y = -21; y <= 21; y++)
+          for (let x = -21; x <= 21; x++) {
+            if (x * x + y * y > 21 * 21) continue;
+            let e = x * Math.sin(tilt) + y * Math.cos(tilt) - plane.pitch * 28;
+            rect(
+              113 + x,
+              66 + y,
+              1,
+              1,
+              e < 0 ? "#718998" : e < 1.2 ? "#eed4a5" : "#a26e4b",
+            );
+          }
+        line(94, 66, 106, 66, light);
+        line(119, 66, 132, 66, light);
+        line(106, 66, 110, 70, orange);
+        line(116, 70, 120, 66, orange);
+        rect(111, 66, 4, 2, orange);
+        gauge(
+          172,
+          56,
+          22,
+          "ALTITUDE",
+          mod(alt, 1000) / 1000,
+          "FT",
+          String(alt).padStart(4, "0"),
+        );
+        gauge(
+          222,
+          54,
+          19,
+          "VERT SPD",
+          clamp(0.5 + plane.vs / 170, 0, 1),
+          "V/S",
+          String(Math.round(plane.vs)),
+        );
+        // The radar samples the same periodic height field as the world.
+        let rx = 280,
+          ry = 57,
+          rr = 34;
+        bezel(rx, ry, rr, "TERRAIN RADAR");
+        let a = sim * 1.55;
+        for (let y = -29; y <= 29; y++)
+          for (let x = -29; x <= 29; x++) {
+            let r = Math.hypot(x, y);
+            if (r > 29) continue;
+            let s = Math.sin(plane.yaw),
+              c = Math.cos(plane.yaw),
+              h = ground(
+                plane.p[0] + (x * c - y * s) * 17,
+                plane.p[2] + (-x * s - y * c) * 17,
+              );
+            let az = mod(Math.atan2(x, -y), TAU),
+              dec = Math.exp(-mod(a - az, TAU) * 1.2),
+              ring = Math.abs(r - 14) < 0.67 || Math.abs(r - 28) < 0.6;
+            let v =
+              (h > 0 ? 0.4 + Math.min(0.43, h * 0.0018) : 0.12) +
+              dec * 0.42 +
+              (ring ? 0.24 : 0) +
+              (h > 0 && mod(h, 35) < 5 ? 0.19 : 0) +
+              (Math.abs(h) < 4 ? 0.36 : 0) +
+              (x === 0 || y === 0 ? 0.09 : 0);
+            rect(
+              rx + x,
+              ry + y,
+              1,
+              1,
+              "rgb(" +
+                Math.round(191 * v) +
+                "," +
+                Math.round(120 * v) +
+                "," +
+                Math.round(41 * v) +
+                ")",
+            );
+          }
+        line(rx, ry, rx + Math.sin(a) * 29, ry - Math.cos(a) * 29, "#e7ac53");
+        line(rx - 3, ry + 1, rx, ry - 2, light);
+        line(rx, ry - 2, rx + 3, ry + 1, light);
+        gauge(
+          346,
+          55,
+          22,
+          "HEADING",
+          heading / 360,
+          "MAG",
+          String(heading).padStart(3, "0"),
+        );
+        gauge(393, 65, 16, "N1", 0.66 + plane.throttle * 0.32, "L", "");
+        gauge(430, 69, 16, "N2", 0.65 + plane.throttle * 0.33, "R", "");
+        // The ball shows transient sideslip from bank and yaw rate.
+        rect(91, 104, 48, 7, ink);
+        line(94, 107, 135, 107, "#676b6c");
+        circle(114 + Math.round(plane.slip * 19), 107, 2, light);
+        text("SLIP", 106, 114, muted);
+        text("TURN", 154, 91, muted);
+        rect(153, 100, 38, 3, ink);
+        rect(170 + plane.turn * 19, 98, 3, 6, orange);
+        let now = new Date(),
+          hh = String(now.getHours()).padStart(2, "0"),
+          mm = String(now.getMinutes()).padStart(2, "0"),
+          ss = String(now.getSeconds()).padStart(2, "0");
+        rect(321, 96, 58, 13, ink);
+        text(hh + ":" + mm + ":" + ss, 334, 100, orange);
+        for (let [i, label, on] of [
+          [0, "LOW", plane.rh < 33],
+          [1, "AB", boost],
+          [2, "ARM", rails.some((r) => r <= 0)],
+        ]) {
+          let x = 200 + i * 15;
+          rect(x, 92, 9, 4, on ? (i === 2 ? "#9ca987" : "#ef9d59") : "#504741");
+          text(label, x - 1, 100, muted);
+        }
+        rect(463, 50, 25, 54, ink);
+        for (let i = 0; i < 6; i++)
+          line(466, 57 + i * 7, 470, 57 + i * 7, muted);
+        let th = 83 - plane.throttle * 23;
+        line(479, 95, 476, th, "#94979b");
+        rect(470, th - 3, 14, 6, "#7b6e60");
+        rect(470, th - 3, 14, 2, orange);
+        text("THR", 470, 108, muted);
+      }
+      function drawPanel() {
+        const c = $("panel"),
+          g = c.getContext("2d"),
+          p = plotter(g),
+          w = c.width,
+          h = c.height,
+          cx = w / 2,
+          cy = h / 2;
+        g.clearRect(0, 0, w, h);
+        if (!started || rearInputs.size) return;
+        const cockpit = mode === 1;
+        let amount = cockpit
+          ? transition
+            ? transition.t
+            : 1
+          : transition?.fromCockpit
+            ? 1 - transition.t
+            : 0;
+        if (mode === 2 && !transition) {
+          p.text("N", cx - 1, 13, "#f2e0b5");
+          p.poly(
+            [
+              [cx, 21],
+              [cx - 3, 26],
+              [cx + 3, 26],
+            ],
+            "#f2e0b5",
+          );
+        }
+        if (amount <= 0) return;
+        g.save();
+        g.globalAlpha = clamp(amount * 2 - 0.4, 0, 1);
+        // Project each mark using exactly the outside camera basis and focal length.
+        const green = "#c7edab",
+          amber = "#ffd19b",
+          focal = h * lens * 0.5;
+        const glass = Math.min(144, cx - 7),
+          sill = h * 0.71;
+        p.poly(
+          [
+            [cx - glass, sill],
+            [cx - glass * 0.91, 34],
+            [cx - glass * 0.78, 16],
+            [cx + glass * 0.78, 16],
+            [cx + glass * 0.91, 34],
+            [cx + glass, sill],
+          ],
+          "#1b3a3b2f",
+        );
+        for (let s of [-1, 1]) {
+          p.line(
+            cx + s * glass * 0.78,
+            16,
+            cx + s * glass * 0.91,
+            34,
+            "#cdcdb18e",
+          );
+          p.line(cx + s * glass * 0.91, 34, cx + s * glass, sill, "#92a6978a");
+        }
+        function hudText(str, x, y, col) {
+          p.text(str, x + 1, y + 1, "#38443fc4");
+          p.text(str, x, y, col);
+        }
+
+        function projectDir(v) {
+          let z = dot(v, cam.f);
+          if (z < 0.18) return null;
+          return [
+            cx + (dot(v, cam.r) / z) * focal,
+            cy - (dot(v, cam.u) / z) * focal,
+          ];
+        }
+        function dashLine(a, b, col, dashed) {
+          if (!a || !b) return;
+          if ((a[1] < 25 && b[1] < 25) || (a[1] > h * 0.7 && b[1] > h * 0.7))
+            return;
+          if (dashed)
+            for (let k = 0; k < 3; k++) {
+              let p1 = lerpV(a, b, k / 3),
+                p2 = lerpV(a, b, (k + 0.62) / 3);
+              p.line(...p1, ...p2, col);
+            }
+          else {
+            p.line(a[0] + 1, a[1] + 1, b[0] + 1, b[1] + 1, "#4b534b90");
+            p.line(...a, ...b, col);
+          }
+        }
+        let bearing = Math.atan2(cam.f[0], cam.f[2]);
+        for (let deg = -70; deg <= 70; deg += 5) {
+          let pitch = (deg * Math.PI) / 180;
+          function mark(yaw) {
+            return projectDir([
+              Math.sin(bearing + yaw) * Math.cos(pitch),
+              Math.sin(pitch),
+              Math.cos(bearing + yaw) * Math.cos(pitch),
+            ]);
+          }
+          let width = deg === 0 ? 0.152 : 0.088;
+          for (let s of [-1, 1]) {
+            let a = mark(s * 0.034),
+              b = mark(s * width);
+            dashLine(a, b, green, deg < 0);
+            if (b && b[1] > 40 && b[1] < h * 0.65 && s === 1 && deg % 10 === 0)
+              hudText(String(deg), b[0] + 4, b[1] - 2, green);
+          }
+        }
+        let yaw = mod((bearing * 180) / Math.PI, 360);
+        for (let i = -20; i <= 20; i++) {
+          let n = Math.round(yaw) + i;
+          if (n % 5) continue;
+          let x = cx + (n - yaw) * 2.9;
+          p.line(x, 35, x, n % 10 ? 32 : 29, green);
+          if (n % 10 === 0)
+            hudText(String(mod(n, 360)).padStart(3, "0"), x - 5, 21, green);
+        }
+        p.poly(
+          [
+            [cx, 38],
+            [cx - 2, 41],
+            [cx + 2, 41],
+          ],
+          amber,
+        );
+        p.line(cx - 9, cy, cx - 3, cy, green);
+        p.line(cx + 3, cy, cx + 9, cy, green);
+        p.rect(cx, cy, 1, 1, amber);
+        p.line(cx, cy + 3, cx, cy + 6, green);
+        let span = Math.min(113, w * 0.37),
+          x1 = cx - span,
+          x2 = cx + span - 23;
+        function read(x, y, value, tag) {
+          p.rect(x - 2, y - 2, 26, 10, "#263d3c");
+          hudText(value, x, y, green);
+          hudText(tag, x, y + 12, green);
+        }
+        read(x1, cy - 8, String(Math.round(plane.speed * 1.94384)), "KTS");
+        read(x2, cy - 8, String(Math.round(plane.p[1] * 3.281)), "FT");
+        hudText("G " + plane.g.toFixed(1), x1, cy + 25, green);
+        hudText("M " + rails.filter((r) => !r).length, x1, cy + 34, green);
+        hudText("R " + Math.round(plane.rh * 3.281), x2 - 4, cy + 25, green);
+        if (plane.rh < 35) hudText("PULL UP", cx - 14, cy + 31, amber);
+        if (sim - lastDash > 0.074 || lastDash < 0) {
+          lastDash = sim;
+          instruments();
+        }
+        let dh = Math.min(125, (w * 121) / 360),
+          dw = Math.max(w, (dh * 540) / 121);
+        g.imageSmoothingEnabled = false;
+        let y = h - dh + (1 - amount) * dh;
+        // Canopy rails carry a narrow highlight along their inner edge.
+        for (let s of [-1, 1]) {
+          let side = s < 0 ? 0 : w;
+          let x = side + s * -w * 0.11;
+          p.poly(
+            [
+              [side, h * 0.39],
+              [side, y + 28],
+              [x, y + 14],
+            ],
+            "#353943",
+          );
+          p.line(side, h * 0.39, x, y + 14, "#919099");
+        }
+        if (w / h < 0.85) {
+          let ch = Math.min(h * 0.32, w * 0.63),
+            top = h - ch + (1 - amount) * ch;
+          p.rect(0, top, w, ch, "#303640");
+          p.rect(0, top, w, 2, "#72747a");
+          let row = ch * 0.53;
+          g.drawImage(dash, 31, 34, 169, 76, 0, top, w * 0.66, row);
+          g.drawImage(dash, 242, 18, 77, 85, w * 0.67, top, w * 0.32, row);
+          g.drawImage(dash, 199, 31, 43, 75, 0, top + row, w * 0.18, ch - row);
+          g.drawImage(
+            dash,
+            319,
+            28,
+            134,
+            86,
+            w * 0.19,
+            top + row,
+            w * 0.57,
+            ch - row,
+          );
+          g.drawImage(
+            dash,
+            460,
+            43,
+            35,
+            72,
+            w * 0.84,
+            top + row,
+            w * 0.14,
+            ch - row,
+          );
+        } else g.drawImage(dash, (w - dw) / 2, y, dw, dh);
+        g.restore();
+      }
+      function drawMirrorFrames(boxes) {
+        const panel = $("panel"),
+          g = panel.getContext("2d"),
+          p = plotter(g);
+        for (const { x, y, width: w, height: h, side } of boxes) {
+          const end = x + w,
+            bottom = y + h,
+            mount = side < 0 ? x + 5 : end - 5;
+          // The short arm and chamfered housing sit on top of the canopy glass.
+          const edge = side < 0 ? 0 : panel.width;
+          p.poly(
+            [
+              [mount, bottom + 1],
+              [edge, bottom + 10],
+              [edge, bottom + 16],
+              [mount, bottom + 6],
+            ],
+            "#30353e",
+          );
+          p.line(edge, bottom + 10, mount, bottom + 1, "#80838a");
+          p.rect(mount - 4, bottom + 1, 8, 5, "#363a42");
+          p.rect(x - 3, y - 2, w + 6, h + 5, "#191e27");
+          p.rect(x - 2, y - 3, w + 4, 2, "#737579");
+          p.rect(x - 2, y - 1, 2, h, "#575b62");
+          p.rect(end, y - 1, 2, h, "#393d46");
+          p.rect(x, bottom + 1, w, 1, "#717074");
+          g.clearRect(x, y, w, h);
+          for (let j = 0; j < 3; j++) {
+            const n = 3 - j;
+            p.rect(x, y + j, n, 1, "#252a33");
+            p.rect(end - n, y + j, n, 1, "#252a33");
+            p.rect(x, bottom - 1 - j, n, 1, "#252a33");
+            p.rect(end - n, bottom - 1 - j, n, 1, "#252a33");
+          }
+          p.rect(mount - 1, bottom + 2, 2, 2, "#b3aca0");
+        }
+      }
+      // One action map feeds all input devices. Hold actions track their individual
+      // sources so releasing a trigger cannot cancel a key or mouse button still down.
+      const actions = {
+        left: ["Turn left", "ArrowLeft", 14],
+        right: ["Turn right", "ArrowRight", 15],
+        up: ["Climb", "ArrowUp", 12],
+        down: ["Dive", "ArrowDown", 13],
+        gun: ["Machine gun", "KeyG", 7],
+        missile: ["Missile", "KeyF", 5],
+        boost: ["Afterburner", "ShiftLeft", 6],
+        roll: ["Barrel roll", "KeyR", 0],
+        view: ["Camera", "Space", 3],
+        rear: ["Rear view", "KeyC", 4],
+        land: ["Land / take off", "KeyL", 2],
+        settings: ["Controls panel", "KeyP", 9],
+        exit: ["Main screen", "Escape", 8],
+      };
+      const arrowFor = {
+        left: "ArrowLeft",
+        right: "ArrowRight",
+        up: "ArrowUp",
+        down: "ArrowDown",
+      };
+      const mouseChoices = {
+        combo: "Tap roll / hold boost",
+        gun: "Machine gun",
+        missile: "Missile",
+        rear: "Rear view",
+        boost: "Afterburner",
+        roll: "Barrel roll",
+        view: "Camera",
+      };
+      const settingsKey = "patrol.flight-controls.v1";
+      function factorySettings() {
+        return {
+          yawGain: 135,
+          pitchGain: 135,
+          deadzone: 14,
+          invertPitch: false,
+          invertTurn: false,
+          turnAxis: 0,
+          pitchAxis: 1,
+          leftMouse: "combo",
+          rightMouse: "missile",
+          keys: Object.fromEntries(
+            Object.entries(actions).map(([k, v]) => [k, v[1]]),
+          ),
+          pad: Object.fromEntries(
+            Object.entries(actions).map(([k, v]) => [k, "b" + v[2]]),
+          ),
+        };
+      }
+      let config = factorySettings();
+      try {
+        const saved = JSON.parse(localStorage.getItem(settingsKey) || "null");
+        if (saved) {
+          for (const [k, lo, hi] of [
+            ["yawGain", 50, 200],
+            ["pitchGain", 50, 200],
+            ["deadzone", 0, 45],
+            ["turnAxis", 0, 63],
+            ["pitchAxis", 0, 63],
+          ])
+            if (Number.isInteger(saved[k])) config[k] = clamp(saved[k], lo, hi);
+          for (const k of ["invertTurn", "invertPitch"])
+            if (typeof saved[k] === "boolean") config[k] = saved[k];
+          for (const k of ["leftMouse", "rightMouse"])
+            if (Object.hasOwn(mouseChoices, saved[k])) config[k] = saved[k];
+          for (const kind of ["keys", "pad"]) {
+            let map = saved[kind];
+            if (!map) continue;
+            let values = Object.keys(actions).map((a) => map[a]);
+            if (
+              new Set(values).size === values.length &&
+              values.every(
+                (v) =>
+                  typeof v === "string" &&
+                  (kind === "keys"
+                    ? /^[A-Za-z][A-Za-z0-9]{0,30}$/
+                    : /^(b\d{1,3}|a\d{1,2}[+-])$/
+                  ).test(v),
+              )
+            )
+              config[kind] = Object.fromEntries(
+                Object.keys(actions).map((a) => [a, map[a]]),
+              );
+          }
+        }
+      } catch {}
+      const dialog = $("controlsDialog"),
+        sources = { gun: new Set(), boost: new Set() },
+        keyDowns = new Map(),
+        mouseDowns = new Map();
+      let gamepadHints = false;
+      let activePad = null,
+        previousPad = new Set(),
+        padAim = [0, 0],
+        padSteering = false,
+        selectedSlot = null,
+        padSignature = null,
+        padTab = "response",
+        listening = null,
+        axisBaseline = [],
+        padSuppressed = false,
+        navNext = 0,
+        storageOK = true;
+      function saveSettings() {
+        try {
+          localStorage.setItem(settingsKey, JSON.stringify(config));
+          storageOK = true;
+        } catch {
+          storageOK = false;
+          $("bindingMessage").textContent = "Settings apply for this session.";
+        }
+        updateHints();
+      }
+      function prettyKey(c) {
+        return (
+          {
+            Space: "SPACE",
+            Escape: "ESC",
+            ArrowUp: "↑",
+            ArrowDown: "↓",
+            ArrowLeft: "←",
+            ArrowRight: "→",
+            ShiftLeft: "L SHIFT",
+            ShiftRight: "R SHIFT",
+            ControlLeft: "L CTRL",
+            ControlRight: "R CTRL",
+          }[c] || c.replace(/^Key|^Digit/, "").toUpperCase()
+        );
+      }
+      const standardButtons = [
+        "A / Cross",
+        "B / Circle",
+        "X / Square",
+        "Y / Triangle",
+        "LB / L1",
+        "RB / R1",
+        "LT / L2",
+        "RT / R2",
+        "View / Share",
+        "Menu / Options",
+        "LS / L3",
+        "RS / R3",
+        "D-pad ↑",
+        "D-pad ↓",
+        "D-pad ←",
+        "D-pad →",
+        "Home",
+      ];
+      function prettyPad(token) {
+        if (token.startsWith("a")) return "Axis " + token.slice(1);
+        const n = Number(token.slice(1));
+        return (
+          ((!activePad || activePad.mapping === "standard") &&
+            standardButtons[n]) ||
+          "Button " + n
+        );
+      }
+      function updateHints() {
+        const hints = document.querySelectorAll("footer .hint kbd"),
+          bound = (a) => prettyKey(config.keys[a]);
+        let mouse = (a) =>
+          ["leftMouse", "rightMouse"].flatMap((k, i) =>
+            config[k] === a ? [i ? "RMB" : "LMB"] : [],
+          );
+        const hint = (a, extras = []) =>
+          [bound(a), ...mouse(a), ...extras].join(" / ");
+        const combo = mouse("combo");
+        let steer = ["up", "down", "left", "right"].map(bound).join("");
+        let labels = [
+          "MOUSE / " + steer,
+          combo.length ? combo.join("/") + " TAP" : hint("roll"),
+          combo.length ? combo.join("/") + " HOLD" : hint("boost"),
+          hint("gun"),
+          hint("missile"),
+          bound("land"),
+          hint("view"),
+          hint("rear"),
+        ];
+        if (gamepadHints && activePad) {
+          labels = [
+            "STEER AXES " + config.turnAxis + "/" + config.pitchAxis,
+            ...["roll", "boost", "gun", "missile", "land", "view", "rear"].map(
+              (a) => prettyPad(config.pad[a]),
+            ),
+          ];
+        }
+        labels.forEach((s, i) => (hints[i].textContent = s));
+        $("exit").querySelector("kbd").textContent = bound("exit");
+        $("openControls").title = "Flight controls (" + bound("settings") + ")";
+        $("landing").title =
+          bound("land") + " · Request assisted landing or take off";
+      }
+      function setHintDevice(isPad) {
+        if (gamepadHints !== isPad) {
+          gamepadHints = isPad;
+          updateHints();
+        }
+      }
+      function holdAction(action, source, pressed) {
+        if (action === "rear") {
+          setRear(source, pressed);
+          return;
+        }
+        if (!sources[action]) return;
+        if (pressed && airborne()) sources[action].add(source);
+        else sources[action].delete(source);
+        if (action === "gun") gunHeld = sources.gun.size > 0;
+        else boost = sources.boost.size > 0;
+      }
+      function flightAction(a, source, pressed) {
+        if (["rear", "gun", "boost"].includes(a)) {
+          holdAction(a, source, pressed);
+          return;
+        }
+        if (!pressed) return;
+        if (a === "settings") {
+          showControls();
+          return;
+        }
+        if (!started) return;
+        if (a === "exit") resetSortie();
+        if (a === "land") requestLanding();
+        if (a === "view") cycleView();
+        if (a === "roll") barrel();
+        if (a === "missile") fire();
+      }
+      function neutralizeInputs() {
+        keyDowns.clear();
+        mouseDowns.clear();
+        for (const holds of Object.values(sources)) holds.clear();
+        releaseLeft(false);
+        gunHeld = false;
+        boost = false;
+        clearFlightKeys();
+        padAim = [0, 0];
+        padSteering = false;
+        steeringFinger = null;
+        previousPad = activePad ? padButtons(activePad) : new Set();
+        padSuppressed = false;
+      }
+      function showControls() {
+        if (dialog.open) return;
+        neutralizeInputs();
+        dialog.showModal();
+        refreshPanel();
+        $("doneControls").focus();
+        if (soundOn)
+          engineGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.055);
+      }
+      function hideControls() {
+        if (dialog.open) dialog.close();
+      }
+      dialog.addEventListener("cancel", (e) => {
+        e.preventDefault();
+        if (listening) stopCapture();
+        else hideControls();
+      });
+      dialog.addEventListener("close", () => {
+        stopCapture();
+        neutralizeInputs();
+        previous = performance.now();
+        lastUI = -1;
+      });
+      function selectTab(tab) {
+        padTab = tab;
+        stopCapture();
+        for (const button of dialog.querySelectorAll("[data-tab]")) {
+          let chosen = button.dataset.tab === tab;
+          button.setAttribute("aria-pressed", String(chosen));
+          $("tab-" + button.dataset.tab).hidden = !chosen;
+        }
+        dialog.querySelector(".control-scroll").scrollTop = 0;
+      }
+      function stopCapture() {
+        if (listening) {
+          let b = $(
+            listening.kind === "keys" ? "keyBindings" : "padBindings",
+          ).querySelector('[data-action="' + listening.action + '"]');
+          if (b) {
+            b.classList.remove("listening");
+            b.textContent =
+              listening.kind === "keys"
+                ? prettyKey(config.keys[listening.action])
+                : prettyPad(config.pad[listening.action]);
+          }
+        }
+        listening = null;
+        $("bindingMessage").textContent = storageOK
+          ? ""
+          : "Settings apply for this session.";
+      }
+      function captureBinding(kind, action, button) {
+        stopCapture();
+        if (kind === "pad" && activePad) {
+          previousPad = padButtons(activePad);
+          padSuppressed = false;
+        }
+        listening = { kind, action };
+        axisBaseline = activePad ? Array.from(activePad.axes) : [];
+        button.classList.add("listening");
+        button.textContent = kind === "keys" ? "Press key…" : "Press input…";
+        $("bindingMessage").textContent =
+          kind === "keys"
+            ? "Press a key. Escape cancels."
+            : "Press a controller button or move a trigger. Escape cancels.";
+      }
+      function bindCapture(token) {
+        const { kind, action } = listening,
+          map = config[kind],
+          old = map[action],
+          other = Object.keys(map).find(
+            (a) => map[a] === token && a !== action,
+          );
+        map[action] = token;
+        if (other) map[other] = old;
+        stopCapture();
+        saveSettings();
+        drawBindings(kind);
+        $(kind === "keys" ? "keyBindings" : "padBindings")
+          .querySelector('[data-action="' + action + '"]')
+          .focus();
+      }
+      function drawBindings(kind) {
+        let el = $(kind === "keys" ? "keyBindings" : "padBindings");
+        el.replaceChildren();
+        for (let [a, [name]] of Object.entries(actions)) {
+          let row = document.createElement("div"),
+            label = document.createElement("span"),
+            button = document.createElement("button");
+          row.className = "bind-row";
+          label.textContent = name;
+          button.dataset.action = a;
+          button.setAttribute("aria-label", "Rebind " + name);
+          button.textContent =
+            kind === "keys"
+              ? prettyKey(config.keys[a])
+              : prettyPad(config.pad[a]);
+          button.disabled = kind === "pad" && !activePad;
+          button.onclick = () => captureBinding(kind, a, button);
+          row.append(label, button);
+          el.append(row);
+        }
+      }
+      function syncValue(k) {
+        $(k).value = config[k];
+        $(k + "Value").textContent = config[k] + "%";
+      }
+      function fillOptions(el, items, current) {
+        el.replaceChildren(
+          ...items.map(([value, label]) => new Option(label, String(value))),
+        );
+        el.value = String(current);
+      }
+      function axisOptions() {
+        const count = activePad ? activePad.axes.length : 4;
+        const labels = Array.from(
+          {
+            length: Math.max(count, config.turnAxis + 1, config.pitchAxis + 1),
+          },
+          (_, i) => [
+            i,
+            "Axis " +
+              i +
+              ((!activePad || activePad.mapping === "standard") && i < 4
+                ? " · " + ["Left X", "Left Y", "Right X", "Right Y"][i]
+                : ""),
+          ],
+        );
+        for (const k of ["turnAxis", "pitchAxis"])
+          fillOptions($(k), labels, config[k]);
+      }
+      function refreshPanel() {
+        for (const k of ["yawGain", "pitchGain", "deadzone"]) syncValue(k);
+        for (const k of ["invertPitch", "invertTurn"]) $(k).checked = config[k];
+        for (const k of ["leftMouse", "rightMouse"])
+          fillOptions($(k), Object.entries(mouseChoices), config[k]);
+        drawBindings("keys");
+        drawBindings("pad");
+        axisOptions();
+        selectTab(padTab);
+      }
+      function wireControls() {
+        $("openControls").onclick = showControls;
+        $("closeControls").onclick = hideControls;
+        $("doneControls").onclick = hideControls;
+        for (const button of dialog.querySelectorAll("[data-tab]"))
+          button.onclick = () => selectTab(button.dataset.tab);
+        for (const k of ["yawGain", "pitchGain", "deadzone"])
+          $(k).oninput = () => {
+            config[k] = Number($(k).value);
+            syncValue(k);
+            saveSettings();
+          };
+        for (const k of ["invertPitch", "invertTurn"])
+          $(k).onchange = () => {
+            config[k] = $(k).checked;
+            saveSettings();
+          };
+        for (const k of ["turnAxis", "pitchAxis"])
+          $(k).onchange = () => {
+            let next = Number($(k).value),
+              other = k === "turnAxis" ? "pitchAxis" : "turnAxis";
+            if (config[other] === next) config[other] = config[k];
+            config[k] = next;
+            axisOptions();
+            saveSettings();
+          };
+        for (const k of ["leftMouse", "rightMouse"])
+          $(k).onchange = () => {
+            config[k] = $(k).value;
+            saveSettings();
+          };
+        $("resetControls").onclick = () => {
+          config = factorySettings();
+          saveSettings();
+          refreshPanel();
+          $("bindingMessage").textContent = storageOK
+            ? "Default controls restored."
+            : "Defaults restored for this session.";
+        };
+        $("padDevices").onchange = () => {
+          selectedSlot = Number($("padDevices").value);
+          padSignature = null;
+          stopCapture();
+        };
+        updateHints();
+      }
+      function effectiveStick(value) {
+        return (
+          Math.sign(value) *
+          clamp(
+            (Math.abs(value) - config.deadzone / 100) /
+              (1 - config.deadzone / 100),
+            0,
+            1,
+          )
+        );
+      }
+      function padButtons(p) {
+        const pressed = new Set();
+        p.buttons.forEach((b, i) => {
+          if (b.pressed || b.value > 0.48) pressed.add("b" + i);
+        });
+        p.axes.forEach((v, i) => {
+          if (Math.abs(v) > 0.6) pressed.add("a" + i + (v < 0 ? "-" : "+"));
+        });
+        return pressed;
+      }
+      function releasePad() {
+        for (const a of ["gun", "boost", "rear"]) holdAction(a, "pad", false);
+        activePad = null;
+        setHintDevice(false);
+        previousPad.clear();
+        padAim = [0, 0];
+        padSteering = false;
+      }
+      function adjustFocused(dir) {
+        const el = document.activeElement;
+        if (el?.type === "range") {
+          el.value = clamp(
+            Number(el.value) + dir * Number(el.step || 1),
+            Number(el.min),
+            Number(el.max),
+          );
+          el.dispatchEvent(new Event("input"));
+          return;
+        }
+        if (el?.tagName === "SELECT") {
+          el.selectedIndex = clamp(
+            el.selectedIndex + dir,
+            0,
+            el.options.length - 1,
+          );
+          el.dispatchEvent(new Event("change"));
+          return;
+        }
+        const order = dialog.querySelectorAll("[data-tab]"),
+          i = Array.from(order).indexOf(el);
+        if (i >= 0) {
+          const b = order[mod(i + dir, order.length)];
+          b.click();
+          b.focus();
+        }
+      }
+      function navigatePanel(p, pressed, just) {
+        if (listening) {
+          if (listening.kind === "pad") {
+            let tok =
+              just.find((t) => t.startsWith("b")) ||
+              just.find(
+                (t) =>
+                  t.startsWith("a") &&
+                  Math.abs(
+                    p.axes[parseInt(t.slice(1))] -
+                      (axisBaseline[parseInt(t.slice(1))] || 0),
+                  ) > 0.55,
+              );
+            if (tok) bindCapture(tok);
+          }
+          return;
+        }
+        if (just.includes("b1") || just.includes(config.pad.settings)) {
+          hideControls();
+          return;
+        }
+        if (just.includes("b0")) {
+          let el = document.activeElement;
+          if (el?.tagName === "SELECT") adjustFocused(1);
+          else if (el?.type !== "range") el?.click();
+          return;
+        }
+        const x = p.axes[0] || 0,
+          y = p.axes[1] || 0;
+        let dy =
+            pressed.has("b12") || y < -0.62
+              ? -1
+              : pressed.has("b13") || y > 0.62
+                ? 1
+                : 0,
+          dx =
+            pressed.has("b14") || x < -0.62
+              ? -1
+              : pressed.has("b15") || x > 0.62
+                ? 1
+                : 0;
+        if (!dy && !dx) {
+          navNext = 0;
+          return;
+        }
+        let now = performance.now();
+        if (now < navNext) return;
+        navNext = now + (navNext ? 145 : 320);
+        if (dy) {
+          let list = [
+            ...dialog.querySelectorAll(
+              "button:not(:disabled),select:not(:disabled),input:not(:disabled)",
+            ),
+          ].filter((el) => el.getClientRects().length);
+          let i = list.indexOf(document.activeElement);
+          list[mod(i + dy, list.length)]?.focus();
+        } else adjustFocused(dx);
+      }
+      let scopeInput = [0, 0];
+      function drawScope() {
+        if (!dialog.open || padTab !== "response") return;
+        const c = $("stickScope"),
+          g = c.getContext("2d"),
+          w = c.width,
+          h = c.height,
+          x = w / 2,
+          y = h / 2;
+        g.fillStyle = "#121a20";
+        g.fillRect(0, 0, w, h);
+        for (let j = -3; j <= 3; j++)
+          for (let i = -4; i <= 4; i++) {
+            g.fillStyle = "#4d5a5c";
+            g.fillRect(x + i * 13, y + j * 13, 1, 1);
+          }
+        g.strokeStyle = "#39474b";
+        g.lineWidth = 1;
+        g.strokeRect(x - 43.5, y - 43.5, 87, 87);
+        g.fillStyle = "#536362";
+        g.fillRect(x - 42, y, 85, 1);
+        g.fillRect(x, y - 42, 1, 85);
+        const px =
+            x +
+            Math.round(
+              clamp((scopeInput[0] * config.yawGain) / 100, -1, 1) * 41,
+            ),
+          py =
+            y +
+            Math.round(
+              clamp(
+                ((scopeInput[1] * config.pitchGain) / 100) *
+                  (config.invertPitch ? -1 : 1),
+                -1,
+                1,
+              ) * 41,
+            );
+        g.fillStyle = "#ffb67f";
+        g.fillRect(px - 3, py - 1, 7, 3);
+        g.fillRect(px - 1, py - 3, 3, 7);
+      }
+      $("stickScope").onpointermove = (e) => {
+        let b = e.target.getBoundingClientRect();
+        scopeInput = [
+          clamp(((e.clientX - b.left) / b.width) * 2 - 1, -1, 1),
+          clamp(((e.clientY - b.top) / b.height) * 2 - 1, -1, 1),
+        ];
+      };
+      $("stickScope").onpointerleave = () => {
+        scopeInput = [0, 0];
+      };
+      function pollPads() {
+        let pads = [],
+          available = typeof navigator.getGamepads === "function";
+        try {
+          if (available)
+            pads = Array.from(navigator.getGamepads()).filter(
+              (p) => p && p.connected !== false,
+            );
+        } catch {
+          available = false;
+        }
+        const p = pads.find((p) => p.index === selectedSlot) || pads[0],
+          signature = JSON.stringify([
+            available,
+            p?.index,
+            ...pads.map((p) => [
+              p.index,
+              p.id,
+              p.axes.length,
+              p.buttons.length,
+            ]),
+          ]);
+        if (signature !== padSignature) {
+          let changed =
+            !p ||
+            !activePad ||
+            p.index !== activePad.index ||
+            p.id !== activePad.id;
+          if (changed) {
+            releasePad();
+            padSuppressed = true;
+            stopCapture();
+          }
+          activePad = p || null;
+          selectedSlot = p?.index ?? null;
+          padSignature = signature;
+          fillOptions(
+            $("padDevices"),
+            pads.length
+              ? pads.map((p) => [
+                  p.index,
+                  p.id || "Controller " + (p.index + 1),
+                ])
+              : [["", "No controller detected"]],
+            selectedSlot ?? "",
+          );
+          $("padDevices").disabled = pads.length < 2;
+          $("padHelp").textContent = p
+            ? "D-pad navigates this panel. Bottom face button selects. Left and right adjust values."
+            : available
+              ? "Connect a controller and press a button to activate it."
+              : "Gamepad input is unavailable in this browser context.";
+          $("padStart").textContent = p
+            ? " · " + prettyPad("b0") + " to start"
+            : "";
+          if (dialog.open) {
+            axisOptions();
+            drawBindings("pad");
+          }
+        }
+        if (!p || document.hidden) return;
+        activePad = p;
+        let pressed = padButtons(p),
+          just = [...pressed].filter((b) => !previousPad.has(b)),
+          released = [...previousPad].filter((b) => !pressed.has(b));
+        previousPad = pressed;
+        const axis = [
+          effectiveStick(p.axes[config.turnAxis] || 0) *
+            (config.invertTurn ? -1 : 1),
+          effectiveStick(p.axes[config.pitchAxis] || 0),
+        ];
+        if (!document.hasFocus()) {
+          padSuppressed = true;
+          return;
+        }
+        if (padSuppressed) {
+          padSuppressed = false;
+          return;
+        }
+        if (dialog.open) {
+          if (Math.hypot(...axis) > 0.02 || padAim.some(Boolean))
+            scopeInput = axis;
+          padAim = axis;
+          navigatePanel(p, pressed, just);
+          return;
+        }
+        if (!started) {
+          if (just.length) setHintDevice(true);
+          if (just.includes("b0")) launch();
+          else if (just.includes(config.pad.settings)) showControls();
+          return;
+        }
+        axis[0] = clamp(
+          axis[0] +
+            Number(pressed.has(config.pad.right)) -
+            Number(pressed.has(config.pad.left)),
+          -1,
+          1,
+        );
+        axis[1] = clamp(
+          axis[1] +
+            (Number(pressed.has(config.pad.down)) -
+              Number(pressed.has(config.pad.up))) *
+              (config.invertPitch ? -1 : 1),
+          -1,
+          1,
+        );
+        if (just.length) setHintDevice(true);
+        if (
+          airborne() &&
+          !arrowKeys.size &&
+          axis.some(
+            (v, i) => Math.abs(v) > 0.015 && Math.abs(v - padAim[i]) > 0.002,
+          )
+        ) {
+          setHintDevice(true);
+          padSteering = true;
+          keyboardSteering = false;
+          steered = true;
+        }
+        padAim = axis;
+        for (const [a, token] of Object.entries(config.pad)) {
+          if (arrowFor[a]) continue;
+          if (just.includes(token)) flightAction(a, "pad", true);
+          if (released.includes(token)) flightAction(a, "pad", false);
+          if (dialog.open || !started) break;
+        }
+      }
+      let audioCtx = null,
+        engine = null,
+        engineGain = null,
+        filter = null,
+        soundOn = false;
+      function toggleSound() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          let frames = audioCtx.sampleRate * 2,
+            buffer = audioCtx.createBuffer(1, frames, audioCtx.sampleRate),
+            a = buffer.getChannelData(0),
+            v = 0;
+          for (let i = 0; i < frames; i++) {
+            v = v * 0.92 + (Math.random() * 2 - 1) * 0.08;
+            a[i] = v * 3.4;
+          }
+          engine = audioCtx.createBufferSource();
+          engine.buffer = buffer;
+          engine.loop = true;
+          filter = audioCtx.createBiquadFilter();
+          filter.type = "lowpass";
+          filter.frequency.value = 510;
+          engineGain = audioCtx.createGain();
+          engineGain.gain.value = 0;
+          engine
+            .connect(filter)
+            .connect(engineGain)
+            .connect(audioCtx.destination);
+          engine.start();
+        }
+        soundOn = !soundOn;
+        if (soundOn) audioCtx.resume().catch(() => {});
+        engineGain.gain.setTargetAtTime(
+          soundOn ? 0.12 : 0,
+          audioCtx.currentTime,
+          0.1,
+        );
+        $("sound").setAttribute("aria-pressed", String(soundOn));
+        $("sound").lastElementChild.textContent = soundOn
+          ? "SOUND ON"
+          : "SOUND OFF";
+      }
+      function tone(f, t, type, vol, end = f * 0.7) {
+        if (!soundOn || !audioCtx) return;
+        let o = audioCtx.createOscillator(),
+          g = audioCtx.createGain(),
+          now = audioCtx.currentTime;
+        o.type = type;
+        o.frequency.setValueAtTime(f, now);
+        o.frequency.exponentialRampToValueAtTime(end, now + t);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(vol, now + 0.018);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + t);
+        o.connect(g).connect(audioCtx.destination);
+        o.start();
+        o.stop(now + t + 0.01);
+        o.onended = () => {
+          o.disconnect();
+          g.disconnect();
+        };
+      }
+      $("exit").onclick = () => resetSortie();
+      $("landing").onclick = requestLanding;
+      $("sound").onclick = toggleSound;
+      $("start").onclick = launch;
+      $("view").onclick = cycleView;
+      const stage = $("stage");
+      stage.addEventListener("contextmenu", (e) => e.preventDefault());
+      function steer(e) {
+        if (dialog.open || arrowKeys.size) return;
+        setHintDevice(false);
+        padSteering = false;
+        keyboardSteering = false;
+        let b = stage.getBoundingClientRect();
+        aim = [
+          clamp(((e.clientX - b.left) / b.width) * 2 - 1, -1, 1),
+          clamp(((e.clientY - b.top) / b.height) * 2 - 1, -1, 1),
+        ];
+        steered = true;
+      }
+      stage.addEventListener("pointermove", (e) => {
+        if (
+          !started ||
+          e.target.closest("button") ||
+          (e.pointerType === "touch" && e.buttons === 0)
+        )
+          return;
+        if (e.pointerType === "mouse" || e.pointerId === steeringFinger)
+          steer(e);
+      });
+      let steeringFinger = null;
+      stage.addEventListener("pointerdown", (e) => {
+        if (!started || e.target.closest("button")) return;
+        if (e.pointerType === "touch") {
+          e.preventDefault();
+          steeringFinger = e.pointerId;
+          stage.setPointerCapture(e.pointerId);
+          steer(e);
+          return;
+        }
+      });
+      // Mouse button transitions arrive independently even while another button is held.
+      stage.addEventListener("mousedown", (e) => {
+        if (
+          dialog.open ||
+          !started ||
+          e.target.closest("button") ||
+          ![0, 2].includes(e.button)
+        )
+          return;
+        setHintDevice(false);
+        const a = config[e.button === 0 ? "leftMouse" : "rightMouse"];
+        mouseDowns.set(e.button, a);
+        if (a === "combo") {
+          if (!leftDown) {
+            leftDown = true;
+            heldFor = 0;
+          }
+        } else flightAction(a, "mouse" + e.button, true);
+      });
+      function releaseLeft(roll) {
+        if (leftDown && heldFor < 0.25 && roll) barrel();
+        leftDown = false;
+        heldFor = 0;
+        holdAction("boost", "mouseHold", false);
+      }
+      window.addEventListener("mouseup", (e) => {
+        let a = mouseDowns.get(e.button);
+        mouseDowns.delete(e.button);
+        if (a === "combo") {
+          if (![...mouseDowns.values()].includes("combo"))
+            releaseLeft(!dialog.open);
+        } else if (a) flightAction(a, "mouse" + e.button, false);
+      });
+      window.addEventListener("pointerup", (e) => {
+        if (e.pointerId === steeringFinger) {
+          steeringFinger = null;
+          aim = [0, 0];
+        }
+      });
+      window.addEventListener("pointercancel", (e) => {
+        if (e.pointerId === steeringFinger) {
+          steeringFinger = null;
+          aim = [0, 0];
+        }
+      });
+      window.addEventListener("blur", neutralizeInputs);
+      window.addEventListener("keydown", (e) => {
+        if (
+          e.metaKey ||
+          e.altKey ||
+          (e.ctrlKey && !["ControlLeft", "ControlRight"].includes(e.code))
+        )
+          return;
+        if (dialog.open) {
+          if (listening) {
+            e.preventDefault();
+            if (e.repeat) return;
+            if (e.code === "Escape") {
+              stopCapture();
+              return;
+            }
+            if (
+              listening.kind === "keys" &&
+              !["Tab", "Enter", "MetaLeft", "MetaRight"].includes(e.code)
+            )
+              bindCapture(e.code);
+            return;
+          }
+          return;
+        }
+        if (e.repeat) return;
+        // Let the browser activate a focused control with Enter.
+        if (!started && e.code === "Enter") {
+          if (document.activeElement?.tagName !== "BUTTON") {
+            e.preventDefault();
+            launch();
+          }
+          return;
+        }
+        let a = Object.keys(actions).find((k) => config.keys[k] === e.code);
+        if (!a) return;
+        if (!started && a !== "settings") {
+          if (a === "view") {
+            e.preventDefault();
+            launch();
+          }
+          return;
+        }
+        e.preventDefault();
+        setHintDevice(false);
+        keyDowns.set(e.code, a);
+        if (arrowFor[a]) {
+          if (airborne()) {
+            arrowKeys.add(arrowFor[a]);
+            keyboardSteering = true;
+            padSteering = false;
+            steered = true;
+          }
+        } else flightAction(a, "keyboard", true);
+      });
+      window.addEventListener("keyup", (e) => {
+        let a = keyDowns.get(e.code);
+        keyDowns.delete(e.code);
+        if (arrowFor[a]) arrowKeys.delete(arrowFor[a]);
+        else if (a) flightAction(a, "keyboard", false);
+      });
+      document.querySelectorAll(".touch button").forEach((btn) => {
+        const a = btn.dataset.act === "fire" ? "missile" : btn.dataset.act;
+        btn.addEventListener("pointerdown", (e) => {
+          if (dialog.open) return;
+          e.preventDefault();
+          e.stopPropagation();
+          btn.setPointerCapture(e.pointerId);
+          flightAction(a, "touch" + e.pointerId, true);
+        });
+        for (const type of ["pointerup", "pointercancel", "lostpointercapture"])
+          btn.addEventListener(type, (e) =>
+            flightAction(a, "touch" + e.pointerId, false),
+          );
+      });
+      wireControls();
+      let previous = 0,
+        slow = 0,
+        fast = 0,
+        lastUI = -1;
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          neutralizeInputs();
+          if (audioCtx) audioCtx.suspend().catch(() => {});
+        } else {
+          previous = 0;
+          if (soundOn) audioCtx.resume().catch(() => {});
+        }
+      });
+      function frame(t) {
+        let ms = previous ? t - previous : 16.7;
+        previous = t;
+        pollPads();
+        if (dialog.open) {
+          drawScope();
+          requestAnimationFrame(frame);
+          return;
+        }
+        let dt = Math.min(ms * 0.001, 0.085);
+        if (dt <= 0) dt = 0.001;
+        for (let remain = dt; remain > 0;) {
+          let step = Math.min(1 / 45, remain);
+          tick(step);
+          remain -= step;
+        }
+        render();
+        if (sim - lastUI > 0.16 || lastUI < 0) {
+          lastUI = sim;
+          sortieUI();
+          $("telemetry").textContent =
+            String(Math.round(plane.speed * 1.94384)).padStart(3, "0") +
+            " KT   /   " +
+            String(Math.round(plane.p[1] * 3.28084)).padStart(4, "0") +
+            " FT";
+          let hide = started && mode === 1;
+          document.querySelector(".region").style.visibility = hide
+            ? "hidden"
+            : "";
+          $("telemetry").style.visibility = hide ? "hidden" : "";
+          if (soundOn) {
+            filter.frequency.setTargetAtTime(
+              390 + plane.speed * 1.4 + plane.throttle * 1450,
+              audioCtx.currentTime,
+              0.14,
+            );
+            engineGain.gain.setTargetAtTime(
+              0.095 + plane.throttle * 0.13,
+              audioCtx.currentTime,
+              0.15,
+            );
+          }
+        }
+        if (!document.hidden) {
+          frameAvg = mix(frameAvg, Math.min(ms, 220), 0.044);
+          slow = frameAvg > 29 ? slow + ms : Math.max(0, slow - ms);
+          fast = frameAvg < 18 ? fast + ms : 0;
+          if (slow > 1800 && internalH > 190) {
+            internalH = Math.max(190, internalH - 30);
+            slow = 0;
+            fast = 0;
+          }
+          if (fast > 12000 && internalH < 340) {
+            internalH = Math.min(340, internalH + 20);
+            fast = 0;
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+      async function boot() {
+        try {
+          await generate();
+          initGL();
+          updateStores();
+          tick(0.016);
+          render();
+          ready = true;
+          $("progress").classList.add("hidden");
+          $("startText").textContent = "START FLIGHT";
+          $("start").disabled = false;
+          requestAnimationFrame(frame);
+        } catch (e) {
+          $("startText").textContent = "FLIGHT UNAVAILABLE";
+          $("progress").classList.add("hidden");
+          $("notice").textContent = e.message || "Terrain generation failed";
+          console.error(e);
+        }
+      }
+      startWebAnalytics();
+      boot();
+    </script>
+  </body>
+</html>
